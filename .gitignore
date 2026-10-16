@@ -11,10 +11,8 @@ dist/
 # Secrets / local config
 .env
 
-# Generated run artifacts (kept out of VCS except the frozen demo cache)
+# Generated run artifacts
 data/runs/
-# keep the frozen live cache (nvidia/) for offline replay; ignore raw mock output
-data/cache/mock/
 
 # OS / editors
 .DS_Store

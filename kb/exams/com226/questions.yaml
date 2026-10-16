@@ -4,10 +4,11 @@
 # 2025/2026). Candidates answer any FIVE questions; each question carries 20
 # marks (total 100). Marks against each point are the maximum for that point.
 #
-# `answer` is the model answer (kept short). `keywords` is the offline fallback:
-# a point counts as covered when EVERY group in the list has at least one phrase
-# present in the candidate's answer (a group = synonyms of one idea). When a live
-# model is available it decides coverage from the answer text instead.
+# `answer` is the model answer (kept short). `keywords` backs the keyword
+# fallback (used by rule_only and on model failure): a point counts as covered
+# when EVERY group in the list has at least one phrase present in the candidate's
+# answer (a group = synonyms of one idea). When the model is available it decides
+# coverage from the answer text instead.
 exam_id: com226
 title: "File Organization and Management (COM 226)"
 total_marks: 100
@@ -307,7 +308,7 @@ questions:
             marks: 4
             answer: "Explain any six operations: Create, Open, Read, Write/Append, Update, Seek, Close, Delete."
             keywords: [["create"], ["open"], ["read"], ["write", "append"], ["update", "seek", "close", "delete"]]
-            # NOTE: q5c_diagram cannot be verified from plain text offline; it is
+            # NOTE: q5c_diagram cannot be verified from plain text; it is
             # credited when the model (or a human) confirms a diagram is present.
 
   #

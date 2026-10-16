@@ -1,25 +1,19 @@
 """LLM Gateway (MVP plan component 9): the single door to any LLM.
 
 Responsibilities:
-* one wrapper class with pluggable providers (``nvidia``, ``anthropic`` and
-  ``mock``),
-* a response cache keyed by ``hash(model + system + user [+ image bytes])`` so
-  the demo can run fully offline by replaying cached responses,
+* one wrapper class with pluggable live providers (``nvidia`` and ``anthropic``),
 * retries with backoff for the live provider,
 * multimodal (vision) completions for reading scanned pages.
 
-No other module may talk to a provider SDK directly.
+There is no mock or offline mode: every completion is a live provider call, and a
+missing API key is an error. No other module may talk to a provider SDK directly.
 """
 
 from __future__ import annotations
 
 import base64
-import hashlib
-import json
 import time
 from dataclasses import dataclass
-from pathlib import Path
-from typing import Callable
 
 from .logging_setup import get_logger
 
@@ -36,7 +30,6 @@ class LLMResponse:
 
     text: str
     provider: str
-    from_cache: bool
     tokens: int
 
 
@@ -80,15 +73,14 @@ def _openai_message_text(data: dict) -> str:
 
 
 class LLMGateway:
-    """A caching, retrying, provider-agnostic completion gateway."""
+    """A retrying, provider-agnostic completion gateway."""
 
     def __init__(
         self,
-        provider: str = "mock",
+        provider: str = "nvidia",
         model: str = "claude-sonnet-4-5",
         temperature: float = 0.0,
         max_retries: int = 3,
-        cache_dir: str | Path = "data/cache",
         api_key: str | None = None,
         base_url: str | None = None,
     ) -> None:
@@ -96,7 +88,6 @@ class LLMGateway:
         self.model = model
         self.temperature = temperature
         self.max_retries = max_retries
-        self.cache_dir = Path(cache_dir)
         self.api_key = api_key
         self.base_url = base_url
 
@@ -109,99 +100,44 @@ class LLMGateway:
         task: str,
         system: str,
         user: str,
-        mock: Callable[[], str] | None = None,
         images: list[bytes] | None = None,
         max_tokens: int = 8192,
         timeout: int = 180,
     ) -> LLMResponse:
-        """Return a completion, preferring cache, then the live provider.
+        """Return a live completion from the configured provider.
 
         ``task`` is a short label (``extraction`` / ``explanation`` /
-        ``llm_only``) mixed into the cache key so different prompts never collide.
-        ``mock`` is a deterministic factory used when no cache entry exists and
-        no API key is available (offline demo). ``images`` (list of PNG bytes)
-        turns the call into a vision request; the cache key folds in the image
-        bytes so a transcribed page is replayed offline.
+        ``llm_only`` / ``ocr`` ...) used for logging. ``images`` (list of PNG
+        bytes) turns the call into a vision request.
         """
 
-        key = self._key(task, system, user, images)
-
-        for sub in self._read_dirs():
-            cached = self.cache_dir / sub / f"{key}.json"
-            if cached.exists():
-                text = json.loads(cached.read_text(encoding="utf-8")).get("text")
-                if not isinstance(text, str) or not text:
-                    # Skip a poisoned/empty entry rather than returning `None`.
-                    log.warning("ignoring empty cache entry (%s) for task=%s", sub, task)
-                    continue
-                log.debug("cache hit (%s) for task=%s", sub, task)
-                return LLMResponse(text, provider=sub, from_cache=True, tokens=self._tokens(text))
-
-        if self.provider in {"anthropic", "nvidia"}:
-            if not self.api_key:
-                raise LLMGatewayError(
-                    f"provider '{self.provider}' requires an API key (set "
-                    f"{self._key_env_hint()}) or use provider 'mock'"
-                )
-            if self.provider == "anthropic":
-                text = self._call_anthropic(system, user, images, max_tokens)
-            else:
-                text = self._call_nvidia(system, user, images, max_tokens, timeout)
-            self._store(self.provider, key, text)
-            return LLMResponse(
-                text, provider=self.provider, from_cache=False, tokens=self._tokens(text)
-            )
-
-        # mock provider with an empty cache: use the deterministic factory.
-        if mock is None:
+        if self.provider not in {"anthropic", "nvidia"}:
             raise LLMGatewayError(
-                f"no cached response for task={task} and no mock factory supplied"
+                f"unknown provider '{self.provider}' (expected 'nvidia' or 'anthropic')"
             )
-        text = mock()
-        self._store("mock", key, text)
-        return LLMResponse(text, provider="mock", from_cache=False, tokens=self._tokens(text))
+        if not self.api_key:
+            raise LLMGatewayError(
+                f"provider '{self.provider}' requires an API key (set {self._key_env_hint()})"
+            )
+        log.debug("live completion via %s for task=%s", self.provider, task)
+        if self.provider == "anthropic":
+            text = self._call_anthropic(system, user, images, max_tokens)
+        else:
+            text = self._call_nvidia(system, user, images, max_tokens, timeout)
+        return LLMResponse(text, provider=self.provider, tokens=self._tokens(text))
 
     # ------------------------------------------------------------------ #
     # Internals
     # ------------------------------------------------------------------ #
-    def _read_dirs(self) -> list[str]:
-        # Prefer provider-exact cache; the mock can replay any real provider's
-        # cached responses for a frozen offline demo.
-        if self.provider == "mock":
-            return ["mock", "nvidia", "anthropic"]
-        return [self.provider]
-
     def _key_env_hint(self) -> str:
         return {
             "anthropic": "ANTHROPIC_API_KEY",
             "nvidia": "NVIDIA_API_KEY",
         }.get(self.provider, "API key")
 
-    def _key(
-        self, task: str, system: str, user: str, images: list[bytes] | None = None
-    ) -> str:
-        payload = "\n\x1e\n".join([task, self.model, system.strip(), user.strip()])
-        if images:
-            digest = hashlib.sha256()
-            for img in images:
-                digest.update(hashlib.sha256(img).digest())
-            payload += "\n\x1e\n" + digest.hexdigest()
-        return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:32]
-
     @staticmethod
     def _tokens(text: str) -> int:
         return max(1, len(text) // 4)
-
-    def _store(self, sub: str, key: str, text: str) -> None:
-        if not isinstance(text, str) or not text:
-            log.warning("not caching empty response for provider=%s", sub)
-            return
-        folder = self.cache_dir / sub
-        folder.mkdir(parents=True, exist_ok=True)
-        payload = {"provider": sub, "model": self.model, "text": text}
-        (folder / f"{key}.json").write_text(
-            json.dumps(payload, indent=2), encoding="utf-8"
-        )
 
     def _call_nvidia(
         self,
@@ -271,8 +207,7 @@ class LLMGateway:
             import anthropic  # type: ignore
         except Exception as exc:  # pragma: no cover - optional dependency
             raise LLMGatewayError(
-                "the 'anthropic' package is not installed; run "
-                "`pip install anthropic` or use provider 'mock'"
+                "the 'anthropic' package is not installed; run `pip install anthropic`"
             ) from exc
 
         client = anthropic.Anthropic(api_key=self.api_key)

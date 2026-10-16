@@ -7,7 +7,7 @@ Recorded as the agent hit choices or ambiguities (operating rule 8.1.7).
 * Built and tested on **Python 3.14** (the plan asks for 3.11+). All dependencies
   used (`pydantic`, `pyyaml`, `numpy`, `pandas`, `streamlit`, `textstat`,
   `pyspellchecker`, `pillow`, `pypdfium2`) install on 3.14.
-  `scikit-learn`/`spaCy` were avoided to keep the offline install light; QWK is
+  `scikit-learn`/`spaCy` were avoided to keep the install light; QWK is
   implemented directly in `ees/metrics.py`, and PDF rasterisation uses
   `pypdfium2` (a self-contained wheel — no Poppler binary needed).
 * **No `git`** is available in this environment, so per-milestone commits and the
@@ -45,7 +45,7 @@ Recorded as the agent hit choices or ambiguities (operating rule 8.1.7).
   rule engine** and every quote is verified verbatim against the OCR transcript.
 * A digital PDF page with a text layer longer than `ocr.min_embedded_chars` is
   used directly (no vision call). Page provenance is recorded per page
-  (`vision` / `cache` / `embedded` / `mock` / `error`) and shown in the UI.
+  (`vision` / `embedded` / `error`) and shown in the UI.
 * **Why a text transcript and not image→facts directly?** It keeps the "quotes
   are verbatim evidence" guarantee and reuses the whole pipeline; the vision
   model is used only as a transcription device. A direct image→JSON extractor is
@@ -61,21 +61,19 @@ Recorded as the agent hit choices or ambiguities (operating rule 8.1.7).
 * **Exam scans use a different prompt** (`OCR_EXAM_SYSTEM`, task `ocr_exam`) that
   explicitly transcribes the handwritten `CANDIDATE:` and `QUESTION:` header
   fields — the plain essay prompt dropped the handwritten question number, which
-  broke per-question attribution. The essay path keeps its own prompt so its
-  frozen cache stays valid.
+  broke per-question attribution. The essay path keeps its own prompt.
 
-## Offline behavior
+## No mock or offline mode
 
-* With no API key and an empty cache, the LLM gateway uses a **deterministic
-  heuristic stand-in** (`extractor_llm.heuristic_extraction`) clearly labelled
-  `provider="mock"`. It reproduces the *shape* of LLM extraction (facts + quotes)
-  so the pipeline, UI and eval all run offline. It is not a real model.
-* The mock provider reads the cache in the order `mock/`, then `nvidia/`, then
-  `anthropic/`, so a frozen real cache can be committed and replayed offline.
-* Vision responses are cached like any other completion (the cache key folds in
-  the page-image bytes), so a booklet transcribed once replays offline. The three
-  sample booklets in `data/sample_booklets/` are pre-warmed under
-  `data/cache/nvidia/` for this reason.
+* The gateway calls a **live provider** (`nvidia` or `anthropic`) for every
+  completion. There is no response cache, no replayed disk cache, and no
+  deterministic stand-in; a missing API key raises an error rather than falling
+  back. This guarantees every result comes from a real model call.
+* The only deterministic (non-LLM) paths are intentional baselines: `rule_only`
+  mode, the COM 226 keyword matcher, and the COM 226 page-attribution keyword
+  fallback. They are marking modes, not an offline substitute for the model.
+* Tests that exercise the LLM use the configured live provider and skip when no
+  key is present; gateway unit tests stub the HTTP boundary (`_http_post_json`).
 
 ## Safety
 
@@ -87,9 +85,9 @@ Recorded as the agent hit choices or ambiguities (operating rule 8.1.7).
   Note that appending *any* text changes surface NLP features (length, spelling
   rate), so "unchanged mark" is asserted as "no instruction-driven boost" rather
   than byte-identical totals.
-* **On-topic** rating from the offline stand-in uses prompt/key-point keyword
-  overlap with explicit thresholds, tuned so genuine on-topic essays are not
-  falsely flagged off-topic.
+* **On-topic** rating comes from the LLM fact layer (the prompt and key points
+  are provided in the extraction prompt); the validator flags off-topic essays
+  for review.
 
 ## Data
 
@@ -113,15 +111,14 @@ Recorded as the agent hit choices or ambiguities (operating rule 8.1.7).
   `tools/build_exam_kb.py`, so marks and rules cannot drift apart.
 * The LLM keeps its perception-only role — it decides **which marking points are
   covered** and returns a verbatim quote for each; the engine adds the marks.
-  Offline, a **keyword matcher** (every keyword group must appear) is the
-  fallback, so `make exam` runs with no API key. The coverage cache key folds in a
-  hash of the scheme, so editing a marking point invalidates cached results.
-* Every point's quote is verified with `find_span` like an essay quote; offline
-  snippets are taken as exact substrings so they still verify.
+  A **keyword matcher** (every keyword group must appear) is the fallback for
+  `rule_only` mode and for any model failure.
+* Every point's quote is verified with `find_span` like an essay quote; the
+  keyword snippets are taken as exact substrings so they still verify.
 * Reasoning models (e.g. `stepfun-ai/step-5-preview`) need a large `max_tokens`
   (`llm.max_tokens: 16384`): with too small a budget they spend everything on
-  `reasoning_content` and emit no `content`. The gateway now falls back to
-  `reasoning_content` and never caches an empty response.
+  `reasoning_content` and emit no `content`. The gateway falls back to
+  `reasoning_content` when `content` is empty.
 
 ### Attributing scanned exam pages to questions
 
@@ -131,11 +128,11 @@ Recorded as the agent hit choices or ambiguities (operating rule 8.1.7).
   reads it); a page whose header is missing or *repeats* an earlier page (a
   question cannot start twice) has its question resolved by the model
   (`_resolve_page_question`, flagged `page-resolved:`), with a weighted keyword
-  scorer (`_content_score`) as the offline fallback. Pages of the same question are
+  scorer (`_content_score`) as the fallback. Pages of the same question are
   concatenated; unmatched pages are listed in `unassigned-pages:`.
 * Numeric content makes keyword matching unreliable (a stray "4" satisfies a
   one-group point), so `_content_score` weights each matched point by its number
-  of keyword groups, and the LLM decides when a live model is available.
+  of keyword groups, and the LLM decides when available.
 * Heading detection tolerates OCR punctuation: `_HEADING_ANY` accepts a short run
   of non-alphanumerics between the keyword and the number, so `**Question:** 4`
   (markdown-bold from the 11B model) is recognised.

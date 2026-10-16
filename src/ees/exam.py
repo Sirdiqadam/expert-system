@@ -193,7 +193,8 @@ def _resolve_page_question(
 ) -> str | None:
     """Ask the model which question a page answers (used for ambiguous headers).
 
-    Falls back to the offline keyword matcher when no live model is available.
+    Returns ``None`` in ``rule_only`` mode or when the model is unavailable or
+    unsure; the caller then falls back to the keyword matcher.
     """
 
     if mode == "rule_only":
@@ -209,13 +210,11 @@ def _resolve_page_question(
         'Return JSON: {"question": "<id>"} naming the single question this page '
         'answers, or {"question": null} if none fit. Use only the ids above.'
     )
-    mock = lambda: json.dumps({"question": _best_by_content(text, paper)})  # noqa: E731
     try:
         resp = gateway.complete(
             task=f"exam_page_assign_{scheme_sig}_{max_tokens}",
             system=PAGE_ASSIGN_SYSTEM,
             user=prompt,
-            mock=mock,
             max_tokens=max_tokens,
         )
     except LLMGatewayError as exc:
@@ -378,16 +377,8 @@ def _detect_coverage(
     if mode == "rule_only":
         return _keyword_coverage(segment, question), "keyword", 0, []
 
-    mock_payload = json.dumps(
-        {
-            "covered": [
-                {"point_id": pid, "quote": q}
-                for pid, q in _keyword_coverage(segment, question).items()
-            ]
-        }
-    )
-    # Fold the scheme itself into the cache key so editing the marking points
-    # (answers/keywords) invalidates any cached coverage.
+    # Fold the scheme itself into the task label so logs distinguish edits to the
+    # marking points (answers/keywords).
     scheme_sig = hashlib.sha256(
         json.dumps(
             [
@@ -402,7 +393,6 @@ def _detect_coverage(
             task=f"exam_coverage_{question.id}_{scheme_sig}",
             system=COVERAGE_SYSTEM,
             user=_build_coverage_prompt(question, segment),
-            mock=lambda: mock_payload,
             max_tokens=max_tokens,
         )
     except LLMGatewayError as exc:
@@ -415,10 +405,8 @@ def _detect_coverage(
         log.warning("coverage JSON invalid for %s: %s", question.id, exc)
         return _keyword_coverage(segment, question), "keyword", resp.tokens, ["coverage-json-error"]
 
-    method = "cache" if resp.from_cache else ("llm" if resp.provider != "mock" else "keyword")
+    method = "llm"
     warnings: list[str] = []
-    if mode == "llm_only" and method == "keyword":
-        warnings.append("llm-only-used-keyword-fallback")
     return covered, method, resp.tokens, warnings
 
 
@@ -485,8 +473,8 @@ def mark_exam(
                 Fact(
                     name=f"covered_{pt.id}",
                     value=pt.id in covered,
-                    source="llm" if method in {"llm", "cache"} else "nlp",
-                    confidence=0.85 if method in {"llm", "cache"} else None,
+                    source="llm" if method == "llm" else "nlp",
+                    confidence=0.85 if method == "llm" else None,
                     evidence=[span] if span else [],
                 )
             )
@@ -665,9 +653,12 @@ def _main() -> None:  # pragma: no cover - convenience
     base = PROJECT_ROOT / "kb" / "exams" / args.exam
     paper = load_exam_paper(base / "questions.yaml")
     kb = load_knowledge(base)
-    provider = config.llm.provider if config.llm.api_key else "mock"
+    if not config.llm.api_key:
+        parser.error(
+            f"provider '{config.llm.provider}' requires {config.llm.api_key_env}"
+        )
     gateway = LLMGateway(
-        provider=provider, model=config.llm.model, cache_dir=config.cache_path,
+        provider=config.llm.provider, model=config.llm.model,
         api_key=config.llm.api_key, base_url=config.llm.base_url,
     )
     script = Path(args.script).read_text(encoding="utf-8")

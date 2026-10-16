@@ -5,8 +5,8 @@ The transcript then flows through the normal pipeline (NLP features + LLM fact
 extraction + rule-based inference), so the mark is still produced solely by the
 inference engine and every quote is verified verbatim against the transcript.
 
-Offline, a page with an embedded text layer (digital PDF) is used directly, and
-a previously cached transcription is replayed so the demo works without a key.
+A page with an embedded text layer (digital PDF) is used directly; otherwise the
+vision LLM reads the page image.
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ OCR_INSTRUCTION = "Transcribe all text on this page exactly as written."
 
 # The exam path uses a header-aware prompt so the handwritten header fields - in
 # particular the question number, which drives attribution - are captured. It is
-# a separate task/cache key so essay booklets keep their frozen cache.
+# a separate task label so the two OCR paths are logged distinctly.
 OCR_EXAM_SYSTEM = (
     "You are a precise OCR engine for scanned handwritten exam booklets. "
     "Convert the page image into plain text. Transcribe every word exactly as "
@@ -59,7 +59,7 @@ class PageTranscript:
 
     index: int
     text: str = ""
-    source: str = ""  # vision | cache | embedded | mock | error
+    source: str = ""  # vision | embedded | error
     provider: str = ""
     tokens: int = 0
     error: str = ""
@@ -79,8 +79,8 @@ class Transcript:
 def vision_gateway_for(config: AppConfig, base: LLMGateway) -> LLMGateway:
     """Build a gateway that talks to the configured vision model.
 
-    Reuses the base gateway's provider, key, cache and base URL so vision
-    responses are cached alongside text ones for offline replay.
+    Reuses the base gateway's provider, key and base URL so the same credentials
+    and endpoint serve both text and vision requests.
     """
 
     return LLMGateway(
@@ -88,7 +88,6 @@ def vision_gateway_for(config: AppConfig, base: LLMGateway) -> LLMGateway:
         model=config.ocr.vision_model,
         temperature=base.temperature,
         max_retries=base.max_retries,
-        cache_dir=base.cache_dir,
         api_key=base.api_key,
         base_url=base.base_url,
     )
@@ -111,23 +110,18 @@ def transcribe_page(
     instruction: str = OCR_INSTRUCTION,
     task: str = "ocr",
 ) -> PageTranscript:
-    """Transcribe a single page (cache first, then embedded text, then vision)."""
+    """Transcribe a single page (embedded text layer, else the vision model)."""
 
     # A digital PDF page with a decent text layer needs no OCR at all.
-    if (
-        gateway.provider != "mock"
-        and len(page.embedded_text.strip()) >= min_embedded_chars
-    ):
+    if len(page.embedded_text.strip()) >= min_embedded_chars:
         return PageTranscript(page.index, _normalise(page.embedded_text), "embedded")
 
-    mock = lambda: page.embedded_text  # noqa: E731
     try:
         resp = gateway.complete(
             task=task,
             system=system,
             user=instruction,
             images=[page.png],
-            mock=mock,
             max_tokens=4096,
             timeout=600,
         )
@@ -135,14 +129,8 @@ def transcribe_page(
         log.warning("page %d OCR failed: %s", page.index + 1, exc)
         return PageTranscript(page.index, "", "error", error=str(exc))
 
-    if resp.from_cache:
-        source = "cache"
-    elif resp.provider == "mock":
-        source = "embedded" if page.embedded_text.strip() else "mock"
-    else:
-        source = "vision"
     return PageTranscript(
-        page.index, _normalise(resp.text), source, resp.provider, resp.tokens
+        page.index, _normalise(resp.text), "vision", resp.provider, resp.tokens
     )
 
 

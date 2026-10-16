@@ -29,7 +29,7 @@ booklets: ## (Re)generate the sample scanned booklets in data/sample_booklets
 exam-kb: ## Regenerate the COM 226 KB (rubric/rules) from kb/exams/com226/questions.yaml
 	$(PYV) tools/build_exam_kb.py com226
 
-exam: ## Mark the sample COM 226 script (offline unless an API key is set)
+exam: ## Mark the sample COM 226 script (requires an API key)
 	$(PYV) -m ees.exam data/exam/com226/sample_student_script.txt
 
 clean: ## Remove caches and build artifacts

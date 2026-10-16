@@ -1,7 +1,7 @@
 """Streamlit UI (MVP plan component 8, milestone M8).
 
-Five tabs: Marking, Pipeline, Knowledge, Evaluation, Exam (COM 226). Runs fully
-offline in mock/cached mode with no API key.
+Five tabs: Marking, Pipeline, Knowledge, Evaluation, Exam (COM 226). Requires a
+live LLM provider and an API key.
 """
 
 from __future__ import annotations
@@ -45,12 +45,11 @@ def get_config():
 
 @st.cache_resource
 def get_gateway(
-    provider: str, model: str, cache_dir: str, base_url: str | None, api_key: str | None
+    provider: str, model: str, base_url: str | None, api_key: str | None
 ):
     return LLMGateway(
         provider=provider,
         model=model,
-        cache_dir=cache_dir,
         base_url=base_url,
         api_key=api_key,
     )
@@ -64,14 +63,15 @@ def load_kb():
 
 def _gateway_for(config):
     provider = config.llm.provider
-    # If a live provider is selected but no key is present, fall back to the
-    # offline mock so the demo always works.
-    if provider != "mock" and not config.llm.api_key:
-        provider = "mock"
+    if not config.llm.api_key:
+        st.error(
+            f"Provider '{provider}' requires an API key. Set "
+            f"`{config.llm.api_key_env}` (e.g. in the repo `.env`) and reload."
+        )
+        st.stop()
     return get_gateway(
         provider,
         config.llm.model,
-        str(config.cache_path),
         config.llm.base_url,
         config.llm.api_key,
     )
@@ -264,8 +264,8 @@ with tab_mark:
             )
             with st.expander("Recognised text (per page)", expanded=False):
                 for pg in result.pages:
-                    src = {"vision": "vision model", "cache": "cache", "embedded": "PDF text layer",
-                           "mock": "offline fallback", "error": "ERROR"}.get(pg.source, pg.source)
+                    src = {"vision": "vision model", "embedded": "PDF text layer",
+                           "error": "ERROR"}.get(pg.source, pg.source)
                     st.markdown(f"**Page {pg.index + 1}** · _{src}_")
                     st.text(pg.text or "(no text recognised)")
 

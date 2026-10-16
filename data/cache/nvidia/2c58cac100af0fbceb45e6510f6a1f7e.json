@@ -1,5 +1,0 @@
-{
-  "provider": "nvidia",
-  "model": "meta/llama-3.2-11b-vision-instruct",
-  "text": "Candidate Number: 222/Pring/ed/015\nPage No.: 3\n\nQuestion 4: Write on both sides of the Paper\n\n(4a)\nTransaction file is the data of the Transactions performed writing few times of the Transaction while Master file contains both Transaction and master file together.\n\n(4b)\nWhy transaction file is needed as temporary it because it keeps the records for shortest time or has a duration last the file will disappear while Master file holds the information or data's it files permanently."
-}

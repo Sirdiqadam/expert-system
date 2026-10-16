@@ -10,7 +10,6 @@ Run with: ``python -m eval.run_eval`` (or ``make eval``).
 
 from __future__ import annotations
 
-import os
 import sys
 import time
 from pathlib import Path
@@ -51,15 +50,13 @@ def _grade_index(total: float) -> int:
 def run() -> pd.DataFrame:
     config = load_config()
     kb = load_knowledge(config.kb_path)
-    # Evaluation defaults to the offline mock for reproducibility; set
-    # EES_EVAL_LIVE=1 (with a key) to evaluate the configured live provider.
-    provider = "mock"
-    if os.environ.get("EES_EVAL_LIVE") and config.llm.api_key:
-        provider = config.llm.provider
+    if not config.llm.api_key:
+        raise SystemExit(
+            f"provider '{config.llm.provider}' requires {config.llm.api_key_env}"
+        )
     gateway = LLMGateway(
-        provider=provider,
+        provider=config.llm.provider,
         model=config.llm.model,
-        cache_dir=config.cache_path,
         api_key=config.llm.api_key,
         base_url=config.llm.base_url,
     )
@@ -213,8 +210,8 @@ def _write_report(df, essays, latencies, tokens, faithfulness) -> None:
 
     lines.append(
         "## Notes\n"
-        "- `llm_only` and `hybrid` share the same offline cache in mock mode; "
-        "`rule_only` uses only deterministic NLP facts.\n"
+        "- All modes call the live provider; `rule_only` uses only deterministic "
+        "NLP facts and never calls the LLM.\n"
         "- QWK uses the 0-40 mark scale overall and 0-10 per criterion.\n"
         "- Faithfulness = fraction of essays whose feedback cites only fired rules.\n"
     )

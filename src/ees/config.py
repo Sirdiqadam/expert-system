@@ -21,7 +21,7 @@ DEFAULT_CONFIG_PATH = PROJECT_ROOT / "config" / "config.yaml"
 class LLMConfig(BaseModel):
     """Settings for the LLM gateway."""
 
-    provider: str = "mock"  # mock | nvidia | anthropic
+    provider: str = "nvidia"  # nvidia | anthropic
     model: str = "stepfun-ai/step-5-preview"
     temperature: float = 0.0
     max_retries: int = 3
@@ -51,7 +51,6 @@ class PathsConfig(BaseModel):
     """Filesystem locations used across the app (relative to repo root)."""
 
     kb_dir: str = "kb"
-    cache_dir: str = "data/cache"
     runs_dir: str = "data/runs"
     sample_dir: str = "data/sample_essays"
     gold_csv: str = "data/gold/human_scores.csv"
@@ -84,10 +83,6 @@ class AppConfig(BaseModel):
     @property
     def kb_path(self) -> Path:
         return self.resolve(self.paths.kb_dir)
-
-    @property
-    def cache_path(self) -> Path:
-        return self.resolve(self.paths.cache_dir)
 
     @property
     def runs_path(self) -> Path:

@@ -1,7 +1,7 @@
 """Tests for the COM 226 exam-marking (point-based) capability.
 
 These cover the new ``add`` action and point-based rubric criteria in the loader
-and inference engine, the question splitter, the offline keyword matcher and the
+and inference engine, the question splitter, the keyword matcher and the
 best-N aggregation, plus an end-to-end regression on the committed sample script.
 """
 
@@ -75,7 +75,9 @@ def config():
 
 
 def _gateway(tmp_path: Path) -> LLMGateway:
-    return LLMGateway(provider="mock", model="mock", cache_dir=tmp_path / "cache")
+    # These cases run in rule_only mode and never call the model; a keyless
+    # gateway documents that intent.
+    return LLMGateway(provider="nvidia", model="stub", api_key=None)
 
 
 # --------------------------------------------------------------------------- #
@@ -251,7 +253,7 @@ def test_add_action_accumulates(tmp_path: Path) -> None:
 
 
 # --------------------------------------------------------------------------- #
-# End-to-end marking (offline keyword path, deterministic)
+# End-to-end marking (keyword path, deterministic)
 # --------------------------------------------------------------------------- #
 def test_mark_sample_offline(paper: ExamPaper, kb, config, tmp_path: Path) -> None:
     script = SAMPLE.read_text(encoding="utf-8")

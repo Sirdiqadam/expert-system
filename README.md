@@ -16,8 +16,8 @@ Explainable Marking of Students' Writing Examinations.*
 
 ## Quickstart (< 10 minutes)
 
-Requires **Python 3.11+**. The demo runs **fully offline** with no API key
-(cached/heuristic mock mode).
+Requires **Python 3.11+** and a **live LLM provider with an API key** (there is no
+mock or offline mode).
 
 ```bash
 # Linux/macOS
@@ -43,7 +43,7 @@ make test      # pytest
 make eval      # writes eval/report.md + eval/results.csv
 ```
 
-### Using a real LLM (optional)
+### Using an LLM (required)
 
 The default live provider is **NVIDIA NIM** (OpenAI-compatible). Copy
 `.env.example` to `.env` and set `NVIDIA_API_KEY`. Provider/model/endpoint live in
@@ -51,9 +51,9 @@ The default live provider is **NVIDIA NIM** (OpenAI-compatible). Copy
 `EES_LLM_PROVIDER` / `EES_LLM_MODEL`. Anthropic is also supported
 (`llm.provider: anthropic`, `ANTHROPIC_API_KEY`).
 
-All calls go through `llm_gateway.py` at temperature 0 and are cached by
-`hash(model + prompt + essay [+ page images])`, so subsequent runs are offline.
-With no key present the app falls back to the offline mock automatically.
+All calls go through `llm_gateway.py` at temperature 0. There is no response cache
+and no fallback: a missing API key is an error, so every result comes from a live
+model call.
 
 ---
 
@@ -68,10 +68,10 @@ quote is verified verbatim against the recognised text.
 
 In the **Marking** tab choose *📄 Upload booklet (PDF / image)*, select a task
 prompt, and click **Read pages & mark**. The UI shows the per-page transcript and
-its provenance (`vision` / `cache` / `embedded` / `mock` / `error`).
+its provenance (`vision` / `embedded` / `error`).
 
-Three ready-made booklets live in `data/sample_booklets/` and are pre-cached, so
-the scanned flow also works **offline**. Regenerate them with:
+Three ready-made booklets live in `data/sample_booklets/`; reading them needs a
+vision-capable provider. Regenerate them with:
 
 ```bash
 python tools/make_sample_booklets.py
@@ -99,16 +99,17 @@ Damaturu): candidates answer any **FIVE** of seven questions, 20 marks each,
 total **100**.
 
 * Scheme source of truth: `kb/exams/com226/questions.yaml` — each question → parts
-  → marking points, with the model answer, marks and offline keywords.
+  → marking points, with the model answer, marks and keyword fallback.
 * Derived machine KB: `rubric.yaml` (one point-based criterion per question,
   `aggregate: best_n`, `best_n: 5`) and `rules.yaml` (one `add` rule per point).
   Regenerate with `make exam-kb` (`python tools/build_exam_kb.py com226`).
 * Marker: `src/ees/exam.py`. The LLM **only detects which points are covered**
   (with a verbatim quote per point); the inference engine adds the marks through
-  `add` rules. Offline it falls back to a deterministic keyword matcher.
+  `add` rules. `rule_only` mode (and any model failure) uses a deterministic
+  keyword matcher instead.
 
 ```bash
-make exam      # mark the sample script (offline unless an API key is set)
+make exam      # mark the sample script (requires an API key)
 make exam-kb   # regenerate rubric.yaml + rules.yaml from questions.yaml
 ```
 
@@ -130,7 +131,7 @@ step the model accepted).
 using a **header-aware prompt** that also transcribes the handwritten
 `CANDIDATE:` and `QUESTION:` fields. Because scans are page-structured,
 `segment_by_pages` assigns **one page at a time**: a page with a unique header
-number is trusted; a missing or repeated header is resolved by the model (offline:
+number is trusted; a missing or repeated header is resolved by the model (fallback:
 a weighted-keyword match), and the choice is recorded as a `page-resolved:` flag.
 This means a real 5-page handwritten script (`004.PDF`) marks end to end —
 page images → vision transcript → facts → `add` rules → **15/100 (F)** — with each
@@ -224,7 +225,6 @@ essay-expert-system/
 ├─ data/sample_booklets/    # sample scanned booklets (PDF) for the OCR demo
 ├─ data/exam/com226/        # sample exam answer script
 ├─ data/gold/human_scores.csv
-├─ data/cache/              # LLM response cache (offline demo)
 ├─ data/runs/               # JSON marking traces (generated)
 ├─ eval/run_eval.py         # evaluation harness -> eval/report.md
 ├─ tools/                   # helper scripts (make_sample_booklets.py, build_exam_kb.py)
@@ -276,12 +276,13 @@ numbers are fabricated**.
   the Content score), determinism, scores always in bounds, prompt injection
   ignored, hybrid rejects LLM-provided scores, explanations cannot cite unknown
   rule ids.
-* Integration tests: full pipeline in mock mode across all sample essays.
+* Integration tests: full pipeline across the sample essays (live provider; skipped
+  without a key).
 * Scanned-booklet tests: PDF/multi-page-TIFF ingestion, page limits, headerless
-  sniffing, vision error handling, OCR cache replay, and end-to-end
-  `mark_document` on a generated booklet.
+  sniffing, vision error handling, and end-to-end `mark_document` on a generated
+  booklet.
 * Exam tests: point-based scheme/`add` action, best-N aggregation, the question
-  splitter, the offline keyword matcher, and scanned-**page** attribution
+  splitter, the keyword matcher, and scanned-**page** attribution
   (header trust, duplicate-header re-resolution, content fallback, unassigned
   pages).
 * Coverage target: ≥ 80% on `src/ees/`.
@@ -290,9 +291,9 @@ numbers are fabricated**.
 
 ## Risks, ethics and limitations
 
-* **LLM variability** — mitigated by temperature 0, caching, JSON-schema
-  validation and verbatim quote verification; residual variance can be checked by
-  re-running extraction several times.
+* **LLM variability** — mitigated by temperature 0, JSON-schema validation and
+  verbatim quote verification; residual variance can be checked by re-running
+  extraction several times.
 * **Bias and fairness** — language-background and dialect effects are real; the
   fairness probe compares score distributions across essay-length bands and
   flagged/borderline scripts always go to human review.

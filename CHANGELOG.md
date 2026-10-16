@@ -117,3 +117,22 @@ All notable changes to the Explainable Essay-Marking Expert System MVP.
   end: page OCR → facts → rules → **15/100 (F)** on a genuinely weak script, with
   per-question attribution and every credited point quoting the candidate verbatim.
 - **105 tests passing.**
+
+### M15 — Remove mock/offline mode (live-only)
+- `llm_gateway.py`: **removed the `mock` provider, the disk response cache and
+  offline replay.** The gateway now calls a live provider (`nvidia`/`anthropic`)
+  for every completion and raises if the API key is missing. `LLMResponse` drops
+  `from_cache`.
+- `extractor_llm.py`: removed the deterministic `heuristic_extraction` stand-in
+  and the invalid-JSON fallback; invalid JSON is now an error. `ExtractionResult`
+  drops `from_cache`.
+- `baselines.py`, `ocr_llm.py`, `pipeline.py`, `exam.py`: removed all
+  `mock=` factories and `mock`/`cache` branches. Page provenance is now
+  `vision` / `embedded` / `error`; exam coverage method is `llm` / `keyword`.
+- `config`: default provider is `nvidia`; `paths.cache_dir` / `cache_path` removed;
+  `data/cache/` deleted. `app/streamlit_app.py` and `eval/run_eval.py` no longer
+  fall back to mock — both require an API key.
+- Tests: mock/cache tests removed; LLM tests use a `live_gateway` fixture that
+  skips without a key; gateway unit tests stub the HTTP boundary via monkeypatch.
+- Docs updated to describe the system as live-only.
+

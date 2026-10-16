@@ -1,5 +1,0 @@
-{
-  "provider": "nvidia",
-  "model": "stepfun-ai/step-5-preview",
-  "text": "{\"content\": {\"score\": 7, \"justification\": \"Clear thesis supporting abolition with two main arguments (cost, self-expression) and a briefly rebutted counterargument, but the arguments are thin and lack developed evidence.\"}, \"organization\": {\"score\": 7, \"justification\": \"Clear introduction-body-conclusion structure with transition words linking paragraphs, though the essay is brief and development is limited.\"}, \"language\": {\"score\": 7, \"justification\": \"Generally accurate simple sentences with no impeding errors, but limited sentence variety and basic vocabulary.\"}, \"mechanics\": {\"score\": 9, \"justification\": \"Accurate spelling, punctuation, and capitalization throughout.\"}}"
-}

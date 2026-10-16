@@ -2,11 +2,8 @@
 
 The LLM *perceives*: it returns structured facts with verbatim quotes and never a
 score. Every quote is verified against the essay; unverifiable quotes trigger one
-retry and are then dropped with a warning.
-
-Offline (no API key, empty cache) a deterministic heuristic stand-in produces the
-same shape of output so the whole pipeline runs without internet. It is clearly
-labelled ``provider="mock"``.
+retry and are then dropped with a warning. There is no offline fallback: a
+missing key or invalid JSON is an error.
 """
 
 from __future__ import annotations
@@ -15,23 +12,14 @@ import json
 import re
 from dataclasses import dataclass, field
 
-from .features_nlp import (
-    count_connectives,
-    prompt_keyword_overlap,
-    split_paragraphs,
-    split_sentences,
-)
 from .llm_gateway import LLMGateway, LLMGatewayError
 from .logging_setup import get_logger
 from .schemas import (
     ArgumentInfo,
-    CoherenceInfo,
-    ContentPoint,
     CounterargumentInfo,
+    ContentPoint,
     Fact,
-    GrammarError,
     LLMExtraction,
-    OnTopicInfo,
     Span,
     ThesisInfo,
 )
@@ -58,38 +46,13 @@ _SCHEMA_HINT = """{
   "grammar_error_examples": [{"quote": str, "type": str}]
 }"""
 
-STANCE_MARKERS = [
-    "should", "shouldn't", "must", "ought", "believe", "argue", "think",
-    "agree", "disagree", "abolish", "ban", "support", "oppose", "better",
-    "worse", "recommend", "in my opinion", "i conclude", "is a good idea",
-    "is a bad idea", "more harm than good", "harm than good", "does more harm",
-    "does more good", "advantage", "disadvantage", "beneficial", "harmful",
-]
-ARGUMENT_MARKERS = [
-    "because", "since", "therefore", "as a result", "this shows", "due to",
-    "for example", "for instance", "which means",
-]
-EVIDENCE_MARKERS = [
-    "for example", "for instance", "according to", "research", "study",
-    "survey", "data", "percent", "%",
-]
-CONCESSION_MARKERS = [
-    "although", "some may argue", "opponents", "critics", "on the other hand",
-    "others believe", "while some", "admittedly", "it is true that",
-]
-CONTRAST_MARKERS = [
-    "however", "nevertheless", "nonetheless", "but", "yet", "still", "even so",
-]
-
-
 @dataclass
 class ExtractionResult:
     """Extraction output plus provenance and quality signals."""
 
     extraction: LLMExtraction
     facts: list[Fact]
-    provider: str = "mock"
-    from_cache: bool = False
+    provider: str = ""
     tokens: int = 0
     rejected_quotes: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
@@ -255,107 +218,6 @@ def _parse_json(text: str) -> LLMExtraction:
 
 
 # --------------------------------------------------------------------------- #
-# Deterministic heuristic stand-in (offline mock)
-# --------------------------------------------------------------------------- #
-def heuristic_extraction(
-    essay: str, prompt_text: str = "", content_points: list[ContentPoint] | None = None
-) -> LLMExtraction:
-    """A deterministic, explainable stand-in for the LLM extractor.
-
-    Used only when no API key and no cache entry exist. It reads the essay with
-    simple markers so the whole pipeline can be demonstrated offline.
-    """
-
-    content_points = content_points or []
-    sentences = split_sentences(essay)
-
-    # Thesis: first early sentence expressing a stance.
-    thesis = ThesisInfo()
-    for s in sentences[:4]:
-        if any(m in s.lower() for m in STANCE_MARKERS):
-            thesis = ThesisInfo(present=True, quote=s)
-            break
-
-    # Arguments: sentences offering reasons.
-    args: list[ArgumentInfo] = []
-    for s in sentences:
-        low = s.lower()
-        if any(m in low for m in ARGUMENT_MARKERS):
-            has_ev = any(m in low for m in EVIDENCE_MARKERS)
-            args.append(
-                ArgumentInfo(
-                    summary=s[:120],
-                    quote=s,
-                    has_evidence=has_ev,
-                    evidence_quote=s if has_ev else "",
-                )
-            )
-    args = args[:6]
-
-    # Counterargument: a concession, and whether it is answered.
-    counter = CounterargumentInfo()
-    for i, s in enumerate(sentences):
-        low = s.lower()
-        positions = [low.find(m) for m in CONCESSION_MARKERS if low.find(m) >= 0]
-        if not positions:
-            continue
-        pos = min(positions)
-        counter.present = True
-        counter.quote = s
-        tail = low[pos + 1 :]
-        if any(m in tail for m in CONTRAST_MARKERS):
-            counter.rebutted = True
-        elif i + 1 < len(sentences) and any(
-            m in sentences[i + 1].lower() for m in CONTRAST_MARKERS
-        ):
-            counter.rebutted = True
-        break
-
-    # Coherence from connectives and paragraphing.
-    conn = count_connectives(essay)
-    paras = len(split_paragraphs(essay))
-    coh_rating = max(1, min(5, 1 + conn // 2 + (1 if paras >= 3 else 0)))
-    just = next((s for s in sentences if count_connectives(s)), "")
-
-    # On-topic from keyword overlap (default neutral when no prompt given).
-    if prompt_text:
-        overlap = prompt_keyword_overlap(essay, prompt_text, [p.description for p in content_points])
-        if overlap >= 0.40:
-            on_topic = 5
-        elif overlap >= 0.28:
-            on_topic = 4
-        elif overlap >= 0.16:
-            on_topic = 3
-        elif overlap >= 0.08:
-            on_topic = 2
-        else:
-            on_topic = 1
-    else:
-        on_topic = 3
-
-    # Key points covered: description keywords present in the essay.
-    covered: list[str] = []
-    for point in content_points:
-        words = [w.lower() for w in re.findall(r"[A-Za-z]{4,}", point.description)]
-        if words and sum(1 for w in words if w in essay.lower()) >= 2:
-            covered.append(point.id)
-
-    return LLMExtraction(
-        thesis=thesis,
-        arguments=args,
-        counterargument=counter,
-        coherence=CoherenceInfo(rating=coh_rating, justification_quote=just),
-        on_topic=OnTopicInfo(rating=on_topic),
-        key_points_covered=covered,
-        grammar_error_examples=[],
-    )
-
-
-def _heuristic_json(essay: str, prompt_text: str, content_points: list[ContentPoint]) -> str:
-    return heuristic_extraction(essay, prompt_text, content_points).model_dump_json()
-
-
-# --------------------------------------------------------------------------- #
 # Entry point
 # --------------------------------------------------------------------------- #
 def extract(
@@ -369,15 +231,9 @@ def extract(
     content_points = content_points or []
     system = EXTRACTION_SYSTEM
     user = build_user_prompt(prompt_text, essay, content_points)
-    mock = lambda: _heuristic_json(essay, prompt_text, content_points)  # noqa: E731
 
-    resp = gateway.complete(task="extraction", system=system, user=user, mock=mock)
-    try:
-        extraction = _parse_json(resp.text)
-    except LLMGatewayError:
-        log.warning("extraction returned invalid JSON; using heuristic stand-in")
-        extraction = heuristic_extraction(essay, prompt_text, content_points)
-        resp = type(resp)(resp.text, provider="mock-fallback", from_cache=False, tokens=resp.tokens)
+    resp = gateway.complete(task="extraction", system=system, user=user)
+    extraction = _parse_json(resp.text)
 
     rejected = quote_violations(extraction, essay)
     if rejected:
@@ -386,7 +242,7 @@ def extract(
             + ", ".join(rejected)
             + ". Copy quotes exactly from the essay or use an empty quote."
         )
-        resp2 = gateway.complete(task="extraction_retry", system=system, user=correction, mock=mock)
+        resp2 = gateway.complete(task="extraction_retry", system=system, user=correction)
         try:
             extraction2 = _parse_json(resp2.text)
             rejected2 = quote_violations(extraction2, essay)
@@ -401,7 +257,6 @@ def extract(
         extraction=extraction,
         facts=facts,
         provider=resp.provider,
-        from_cache=resp.from_cache,
         tokens=resp.tokens,
         rejected_quotes=rejected,
         warnings=warnings,

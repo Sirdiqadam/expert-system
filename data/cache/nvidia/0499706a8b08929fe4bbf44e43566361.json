@@ -1,5 +1,0 @@
-{
-  "provider": "nvidia",
-  "model": "stepfun-ai/step-5-preview",
-  "text": "```json\n{\n  \"covered\": [\n    {\n      \"point_id\": \"q6a_lifo\",\n      \"quote\": \"store data according to the life lost in first out\"\n    },\n    {\n      \"point_id\": \"q6b_fifo\",\n      \"quote\": \"store data according to the FIFO in the first in first out\"\n    }\n  ]\n}\n```"
-}

@@ -338,7 +338,7 @@ class PageTranscript(BaseModel):
 
     index: int
     text: str = ""
-    source: str = ""  # vision | cache | embedded | mock | error
+    source: str = ""  # vision | embedded | error
     provider: str = ""
     tokens: int = 0
     error: str = ""
@@ -444,7 +444,7 @@ class PointResult(BaseModel):
     covered: bool = False
     quote: str = ""
     evidence_ok: bool = False
-    method: str = ""  # keyword | llm | cache
+    method: str = ""  # keyword | llm
 
 
 class ExamQuestionResult(BaseModel):

@@ -15,7 +15,7 @@ from .features_nlp import extract_features
 from .grading import grade_for
 from .inference_engine import InferenceEngine
 from .kb_loader import KnowledgeBase
-from .llm_gateway import LLMGateway
+from .llm_gateway import LLMGateway, LLMGatewayError
 from .logging_setup import get_logger
 from .schemas import (
     ContentPoint,
@@ -129,9 +129,14 @@ def mark(
     # --- independent holistic estimate (for the disagreement check) ------- #
     llm_total: float | None = None
     if compute_holistic and mode != "llm_only":
-        holistic = baselines.llm_only(essay, gateway, kb, prompt_text, content_points)
-        llm_total = holistic.total
-        tokens += holistic.tokens
+        try:
+            holistic = baselines.llm_only(essay, gateway, kb, prompt_text, content_points)
+        except LLMGatewayError as exc:
+            log.warning("holistic estimate failed: %s", exc)
+            flags.append("holistic-estimate-error")
+        else:
+            llm_total = holistic.total
+            tokens += holistic.tokens
     disagreement = round(llm_total - total, 4) if llm_total is not None else None
 
     # --- Stage 6: validation / review routing ----------------------------- #
@@ -160,7 +165,13 @@ def mark(
         feedback = "\n".join(templates)
         explanations = templates
         if explain_with_llm:
-            feedback, flags = _llm_rewrite(gateway, proof_tree, scores, counterfacts, firing_log, feedback, flags)
+            try:
+                feedback, flags = _llm_rewrite(
+                    gateway, proof_tree, scores, counterfacts, firing_log, feedback, flags
+                )
+            except LLMGatewayError as exc:
+                log.warning("LLM explanation rewrite failed: %s", exc)
+                flags = _dedupe(flags + ["explanation-llm-error"])
     timer.mark("explanation")
 
     return MarkingResult(
@@ -328,7 +339,6 @@ def _llm_rewrite(
         task="explanation",
         system=explainer.REWRITE_SYSTEM,
         user=user,
-        mock=lambda: deterministic,
     )
     ok, unknown = explainer.verify_feedback(resp.text, firing_log)
     if ok:

@@ -14,18 +14,16 @@ from ees.explainer import (
     why_not_level,
 )
 from ees.kb_loader import load_knowledge
-from ees.llm_gateway import LLMGateway
 from ees.pipeline import mark
 from ees.schemas import FiringLogEntry
 
 
 @pytest.fixture(scope="module")
-def ctx(tmp_path_factory):
+def ctx(live_gateway):
     config = load_config()
     kb = load_knowledge(PROJECT_ROOT / "kb")
-    gateway = LLMGateway(provider="mock", cache_dir=tmp_path_factory.mktemp("cache"))
     essays = load_sample_essays(config)
-    return config, kb, gateway, essays
+    return config, kb, live_gateway, essays
 
 
 def test_proof_tree_has_one_root_per_criterion(ctx) -> None:

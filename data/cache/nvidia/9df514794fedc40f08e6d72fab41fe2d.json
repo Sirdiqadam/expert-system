@@ -1,5 +1,0 @@
-{
-  "provider": "nvidia",
-  "model": "meta/llama-3.2-11b-vision-instruct",
-  "text": "Question 5\nWrite on both sides of the Paper\n\nPile operation\nStorage\nSearch\nupdate\nSave\nDelete\nmodify\nmaintain\n\n(5 b)\nStorage\nupdate\nDelete\nmodify\nSave\n\nStorage uses to store data permanently\nupdate uses to update or modify data or files\nSave ! used to save data or work\nDelete + user to delete unwanted data or files."
-}

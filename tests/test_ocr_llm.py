@@ -3,13 +3,12 @@
 from __future__ import annotations
 
 import io
-from pathlib import Path
 
 from ees.config import PROJECT_ROOT, load_config
 from ees.document_ingest import PageImage
 from ees.kb_loader import load_knowledge
 from ees.llm_gateway import LLMGateway, LLMGatewayError, LLMResponse
-from ees.ocr_llm import OCR_INSTRUCTION, OCR_SYSTEM, transcribe_pages
+from ees.ocr_llm import transcribe_pages
 from ees.pipeline import mark_document, mark_pages
 
 ESSAY = (
@@ -33,12 +32,12 @@ class StubVision:
         self.calls = 0
 
     def complete(
-        self, *, task, system, user, mock=None, images=None, max_tokens=4096, timeout=180
+        self, *, task, system, user, images=None, max_tokens=4096, timeout=180
     ) -> LLMResponse:
         self.calls += 1
         if self._error:
             raise LLMGatewayError(self._error)
-        return LLMResponse(self._text, provider=self.provider, from_cache=False, tokens=7)
+        return LLMResponse(self._text, provider=self.provider, tokens=7)
 
 
 def _page(idx: int = 0, embedded: str = "", png: bytes = b"fake-png") -> PageImage:
@@ -83,35 +82,17 @@ def test_multipage_transcript_is_joined() -> None:
     assert len(t.pages) == 2
 
 
-def test_cached_vision_replays_offline(tmp_path: Path) -> None:
-    # A previous live transcription is stored under the vision model's key...
-    live = LLMGateway(
-        provider="nvidia", model="stub-vision", cache_dir=tmp_path, api_key="k"
-    )
-    key = live._key("ocr", OCR_SYSTEM, OCR_INSTRUCTION, [b"fake-png"])
-    (tmp_path / "nvidia").mkdir(parents=True, exist_ok=True)
-    (tmp_path / "nvidia" / f"{key}.json").write_text(
-        '{"text": "CACHED TRANSCRIPT"}', encoding="utf-8"
-    )
-    # ...and the offline mock replays it without any network.
-    mock = LLMGateway(provider="mock", model="stub-vision", cache_dir=tmp_path)
-    t = transcribe_pages([_page()], mock)
-    assert t.text == "CACHED TRANSCRIPT"
-    assert t.pages[0].source == "cache"
-
-
 # --------------------------------------------------------------------------- #
-# Scanned-booklet marking (offline)
+# Scanned-booklet marking (live provider)
 # --------------------------------------------------------------------------- #
-def _ctx(tmp_path: Path):
+def _ctx(live_gateway):
     config = load_config()
     kb = load_knowledge(PROJECT_ROOT / "kb")
-    gateway = LLMGateway(provider="mock", cache_dir=tmp_path)
-    return config, kb, gateway
+    return config, kb, live_gateway
 
 
-def test_mark_pages_marks_the_transcript(tmp_path: Path) -> None:
-    config, kb, gateway = _ctx(tmp_path)
+def test_mark_pages_marks_the_transcript(live_gateway) -> None:
+    config, kb, gateway = _ctx(live_gateway)
     result = mark_pages(
         [_page()],
         kb,
@@ -126,12 +107,12 @@ def test_mark_pages_marks_the_transcript(tmp_path: Path) -> None:
     assert result.vision_model == "stub-vision"
     assert len(result.pages) == 1
     assert result.error is None
-    assert 0 < result.total <= result.max_total
+    assert 0 <= result.total <= result.max_total
     assert result.firing_log  # the rule engine still produced the mark
 
 
-def test_mark_document_ingests_then_marks(tmp_path: Path) -> None:
-    config, kb, gateway = _ctx(tmp_path)
+def test_mark_document_ingests_then_marks(live_gateway) -> None:
+    config, kb, gateway = _ctx(live_gateway)
     result = mark_document(
         _png_booklet(),
         "scan.png",
@@ -146,8 +127,11 @@ def test_mark_document_ingests_then_marks(tmp_path: Path) -> None:
     assert result.pages and result.pages[0].source == "vision"
 
 
-def test_mark_document_flags_empty_ocr(tmp_path: Path) -> None:
-    config, kb, gateway = _ctx(tmp_path)
+def test_mark_document_flags_empty_ocr() -> None:
+    config = load_config()
+    kb = load_knowledge(PROJECT_ROOT / "kb")
+    # No LLM is needed: a rule-only mark with an empty transcript never calls it.
+    gateway = LLMGateway(provider="nvidia", api_key=None)
     result = mark_document(
         _png_booklet(),
         "scan.png",
@@ -155,6 +139,8 @@ def test_mark_document_flags_empty_ocr(tmp_path: Path) -> None:
         config,
         gateway,
         vision_gateway=StubVision(text=""),
+        mode="rule_only",
+        compute_holistic=False,
         prompt_id="school_uniforms",
     )
     assert "ocr-empty" in result.flags

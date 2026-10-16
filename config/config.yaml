@@ -4,7 +4,7 @@
 mode: hybrid # rule_only | llm_only | hybrid
 
 llm:
-  provider: nvidia # mock | nvidia | anthropic
+  provider: nvidia # nvidia | anthropic
   model: stepfun-ai/step-5-preview
   base_url: https://integrate.api.nvidia.com/v1
   temperature: 0.0
@@ -22,7 +22,6 @@ ocr:
 
 paths:
   kb_dir: kb
-  cache_dir: data/cache
   runs_dir: data/runs
   sample_dir: data/sample_essays
   gold_csv: data/gold/human_scores.csv

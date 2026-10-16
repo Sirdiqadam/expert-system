@@ -23,7 +23,7 @@ user are exactly the rules that fired, backed by verbatim evidence.
 | 6 | Explanation Facility | `explainer.py` | Proof tree (score ← rules ← facts ← evidence), deterministic template explanations, "why not level X?", counterfactuals, optional strict LLM rewrite with a citation post-check |
 | 7 | Validation & Consistency Checker | `validator.py` | Bounds, level-range consistency, LLM-vs-rule disagreement, low confidence, borderline, short, off-topic, prompt injection; routes to human review |
 | 8 | User Interface | `app/streamlit_app.py` | Marking, Pipeline (stepper), Knowledge, Evaluation tabs |
-| 9 | LLM Gateway | `llm_gateway.py` | Single wrapper; Anthropic + mock providers; response cache keyed by `hash(model + prompt + essay)`; retries; offline replay |
+| 9 | LLM Gateway | `llm_gateway.py` | Single wrapper; live providers (`nvidia`, `anthropic`); retries with backoff; multimodal vision calls for scanned pages |
 
 ## Data flow
 
@@ -68,11 +68,11 @@ Defined in `schemas.py` and implemented exactly:
   deliberately weak; it shows what pure rules can do.
 * `llm_only` — the LLM returns rubric scores directly. Baseline only.
 
-## Determinism & offline
+## Determinism
 
 * Engine iterates rules sorted by id and fires to a fixpoint; identical facts
   produce an identical log (property-tested).
 * Temperature 0, JSON-schema validation and verbatim quote checks bound LLM
   variability.
-* The gateway replays a disk cache; with no API key and an empty cache it uses a
-  deterministic heuristic stand-in so the whole pipeline is demonstrable offline.
+* There is no mock or offline mode: the gateway always calls a live provider, and
+  a missing API key is an error.
