@@ -1,0 +1,28 @@
+COM 226 - FILE ORGANIZATION AND MANAGEMENT
+Candidate: Sample Student
+Questions attempted: 1, 2, 3, 4, 5
+
+QUESTION ONE
+(a) A file access method is the technique used by the operating system or a program to locate, read and write records stored in a file on a storage device. There are three main types. Sequential access means records are read one after another in the order they are stored, for example on magnetic tape or in payroll processing. Direct or random access allows any record to be accessed directly by its address or key without reading the records before it, for example looking up an account at an ATM. Indexed access keeps an index of keys and addresses that is searched first, and then the record is read directly; such a file can also be read sequentially, for example a library catalogue.
+(b) Sequential access reads records one after another in stored order and is slow for a single record, while direct access goes straight to the record by its address and is fast. The advantage of sequential access is that it is simple and economical when most records are processed, but its disadvantage is that it is slow for one record and updating means rewriting the file. The advantage of direct access is very fast retrieval and it supports online processing, but the disadvantage is that it is more complex and costly and may waste space.
+(c) Seek time is the time taken for the read/write head to move to the track where the required data is located. For example a hard disk may have an average seek time of about 9 ms. Rotational delay is the time taken for the required sector to rotate under the head once the head is on the correct track. For example on a 7200 rpm disk one revolution takes about 8.33 ms so the average delay is about 4.17 ms.
+
+QUESTION TWO
+(a) Number of blocks = 10 / 4 = 2.5, so we round up to 3 blocks. Block 1 is 4 KB full, block 2 is 4 KB full and block 3 has 2 KB used and 2 KB free. Total allocated is 12 KB so the unused space is 2 KB. This space is wasted because a block is the smallest unit of allocation and cannot be shared with another file, which is internal fragmentation.
+(b) Seek moves the file pointer or disk head to a location so that the next read or write happens there; it does not transfer data and is used for direct access. Read transfers data from secondary storage into main memory from the current pointer position and then advances the pointer.
+(c) Update changes the contents of an existing record while it remains in the file, for example changing a phone number or a balance. Delete removes an entire record from storage so that it no longer exists, for example removing the record of a student who has withdrawn.
+
+QUESTION THREE
+(a) A buffer is a temporary storage area in main memory that holds data while it is transferred between two devices of different speeds, such as the CPU and an I/O device. Its functions are: it compensates for the difference in speed between the CPU and slower I/O devices; and it reduces the number of I/O operations by transferring data in blocks.
+(b) Number of buffers = file size / buffer size = 90 / 80 = 1.125, so we round up to 2 buffers.
+(c) First convert the units: 2 GB = 2048 MB. Then 2048 / 512 = 4 buffers.
+
+QUESTION FOUR
+(a) A transaction file holds records of day to day events such as sales, it is temporary, and it is used to update the master file; for example a daily sales file. A master file holds the permanent main records such as customer details, it is permanent, and it is the reference source; for example a payroll master file.
+(b) A transaction file is temporary because it only collects changes for a period and after it has updated the master file its purpose is served, so it can be discarded or archived. A master file is permanent because it holds the core reference data such as balances that is needed continuously and is only updated, not replaced.
+(c) GFS stands for Grandfather-Father-Son. It keeps three generations of the master file: the son is the newest version, the father is the previous version and the grandfather is the oldest. Each update run creates a new son from the father and the transaction file, and if the current file is lost it can be re-created from an older generation.
+
+QUESTION FIVE
+(a) File organization is the way records are arranged and stored on a storage medium so that they can be accessed and processed efficiently. File re-organization is the process of restructuring an existing file to restore efficiency, for example removing deleted records or rebuilding indexes.
+(b) The four methods are serial, sequential, indexed and random file organization.
+(c) The file operations I can remember are create, open, read and close.

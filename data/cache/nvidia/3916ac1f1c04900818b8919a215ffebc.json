@@ -1,0 +1,5 @@
+{
+  "provider": "nvidia",
+  "model": "stepfun-ai/step-5-preview",
+  "text": "{\"covered\": [{\"point_id\": \"q5a_organization\", \"quote\": \"File organization is the way records are arranged and stored on a storage medium so that they can be accessed and processed efficiently.\"}, {\"point_id\": \"q5a_reorganization\", \"quote\": \"File re-organization is the process of restructuring an existing file to restore efficiency, for example removing deleted records or rebuilding indexes.\"}, {\"point_id\": \"q5b_serial\", \"quote\": \"The four methods are serial, sequential, indexed and random file organization.\"}, {\"point_id\": \"q5b_sequential\", \"quote\": \"The four methods are serial, sequential, indexed and random file organization.\"}, {\"point_id\": \"q5b_indexed\", \"quote\": \"The four methods are serial, sequential, indexed and random file organization.\"}, {\"point_id\": \"q5b_random\", \"quote\": \"The four methods are serial, sequential, indexed and random file organization.\"}]}"
+}

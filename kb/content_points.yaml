@@ -1,0 +1,37 @@
+# Task prompts and their expected key content points.
+# key_points on a prompt reference ids in the content_points list below.
+
+prompts:
+  - id: school_uniforms
+    text: >
+      School uniforms should be abolished. Write an argumentative essay either
+      supporting or opposing this statement, giving reasons and evidence.
+    key_points:
+      - su-position
+      - su-cost
+      - su-equality
+      - su-identity
+      - su-counter
+
+  - id: remote_learning
+    text: >
+      Remote learning does more harm than good for secondary students. Write an
+      argumentative essay either supporting or opposing this statement.
+    key_points:
+      - rl-access
+      - rl-outcomes
+      - rl-social
+      - rl-flexibility
+      - rl-counter
+
+content_points:
+  - {id: su-position, prompt_id: school_uniforms, description: "States a clear position on uniforms."}
+  - {id: su-cost, prompt_id: school_uniforms, description: "Mentions the cost to families of buying uniforms."}
+  - {id: su-equality, prompt_id: school_uniforms, description: "Discusses equality or reduction of visible inequality."}
+  - {id: su-identity, prompt_id: school_uniforms, description: "Considers students' self-expression or identity."}
+  - {id: su-counter, prompt_id: school_uniforms, description: "Acknowledges and answers the opposing view."}
+  - {id: rl-access, prompt_id: remote_learning, description: "Considers unequal access to devices or internet."}
+  - {id: rl-outcomes, prompt_id: remote_learning, description: "Discusses learning outcomes or attainment."}
+  - {id: rl-social, prompt_id: remote_learning, description: "Discusses social development or isolation."}
+  - {id: rl-flexibility, prompt_id: remote_learning, description: "Considers flexibility or time management benefits."}
+  - {id: rl-counter, prompt_id: remote_learning, description: "Acknowledges and answers the opposing view."}

@@ -1,0 +1,5 @@
+{
+  "provider": "nvidia",
+  "model": "stepfun-ai/step-5-preview",
+  "text": "{\"content\": {\"score\": 4, \"justification\": \"Clear position against uniforms, but arguments are thin and undeveloped with no evidence; no counterargument is addressed.\"}, \"organization\": {\"score\": 4, \"justification\": \"Basic claim-reasons-restatement flow is present, but lacks paragraph structure, transitions, and coherent development.\"}, \"language\": {\"score\": 7, \"justification\": \"Generally accurate simple sentences with minor grammatical errors (e.g., 'there' for 'their') that do not impede meaning.\"}, \"mechanics\": {\"score\": 7, \"justification\": \"Punctuation and capitalization are mostly correct; one spelling slip ('alot').\"}}"
+}

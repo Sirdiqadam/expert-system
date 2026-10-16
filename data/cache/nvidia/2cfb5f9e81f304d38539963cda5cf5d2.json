@@ -1,0 +1,5 @@
+{
+  "provider": "nvidia",
+  "model": "stepfun-ai/step-5-preview",
+  "text": "{\"covered\":[{\"point_id\":\"q3a_definition\",\"quote\":\"A buffer is a temporary storage area in main memory that holds data while it is transferred between two devices of different speeds\"},{\"point_id\":\"q3a_function_speed\",\"quote\":\"it compensates for the difference in speed between the CPU and slower I/O devices\"},{\"point_id\":\"q3a_function_io\",\"quote\":\"it reduces the number of I/O operations by transferring data in blocks\"},{\"point_id\":\"q3b_formula\",\"quote\":\"Number of buffers = file size / buffer size\"},{\"point_id\":\"q3b_substitution\",\"quote\":\"90 / 80 = 1.125\"},{\"point_id\":\"q3b_answer\",\"quote\":\"so we round up to 2 buffers\"},{\"point_id\":\"q3c_conversion\",\"quote\":\"First convert the units: 2 GB = 2048 MB\"},{\"point_id\":\"q3c_division\",\"quote\":\"2048 / 512 = 4\"},{\"point_id\":\"q3c_answer\",\"quote\":\"4 buffers\"}]}"
+}

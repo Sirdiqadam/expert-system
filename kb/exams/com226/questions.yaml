@@ -1,0 +1,429 @@
+# COM 226 (File Organization and Management) marking scheme as data.
+#
+# Source: "COM226_Marking_Scheme.docx" (Federal Polytechnic, Damaturu, ND,
+# 2025/2026). Candidates answer any FIVE questions; each question carries 20
+# marks (total 100). Marks against each point are the maximum for that point.
+#
+# `answer` is the model answer (kept short). `keywords` is the offline fallback:
+# a point counts as covered when EVERY group in the list has at least one phrase
+# present in the candidate's answer (a group = synonyms of one idea). When a live
+# model is available it decides coverage from the answer text instead.
+exam_id: com226
+title: "File Organization and Management (COM 226)"
+total_marks: 100
+answer_count: 5
+instruction: "Answer any FIVE questions. Each question carries 20 marks."
+
+questions:
+  #
+  # ------------------------------- QUESTION 1 ------------------------------ #
+  #
+  - id: q1
+    number: 1
+    title: "File access methods, seek time & rotational delay"
+    max_marks: 20
+    parts:
+      - id: q1a
+        label: "(a)"
+        text: "Explain 'File Access Method' and describe the types of file access methods."
+        points:
+          - id: q1a_definition
+            marks: 2
+            answer: "A file access method is the technique/procedure used by the OS or program to locate, read and write records stored in a file on a storage device."
+            keywords: [["technique", "method", "procedure", "way"], ["locate", "find", "read", "write", "access"], ["record", "file"], ["storage", "device", "disk", "medium"]]
+          - id: q1a_sequential
+            marks: 2
+            answer: "Sequential access: records are read/written one after another in the order stored, from the beginning of the file (e.g. magnetic tape, payroll)."
+            keywords: [["sequential", "serial"], ["one after another", "in order", "beginning", "start", "stored order"], ["tape", "payroll", "batch"]]
+          - id: q1a_direct
+            marks: 2
+            answer: "Direct (random/relative) access: any record is accessed directly by its address or key without reading preceding records (e.g. hard disk, ATM lookup)."
+            keywords: [["direct", "random", "relative", "hashed"], ["address", "key", "pointer"], ["record", "directly"], ["disk", "atm", "hard"]]
+          - id: q1a_indexed
+            marks: 2
+            answer: "Indexed (indexed-sequential) access: an index of keys and addresses is searched, then the record is accessed directly; the file can also be processed sequentially (e.g. library catalogue)."
+            keywords: [["index", "indexed"], ["record", "directly", "key"], ["sequential", "catalogue", "library"]]
+      - id: q1b
+        label: "(b)"
+        text: "Compare Sequential and Direct access methods; one advantage and one disadvantage of each."
+        points:
+          - id: q1b_comparison
+            marks: 2
+            answer: "Any two valid points of comparison, e.g. order of access / speed for a single record / typical medium / suitability."
+            keywords: [["sequential"], ["direct", "random"], ["order", "one after another", "speed", "medium", "tape", "disk", "batch", "online"]]
+          - id: q1b_seq_advantage
+            marks: 1
+            answer: "Sequential advantage: simple to organise and economical; efficient when most records are processed."
+            keywords: [["simple", "economical", "efficient", "cheap", "easy"]]
+          - id: q1b_seq_disadvantage
+            marks: 1
+            answer: "Sequential disadvantage: slow for retrieving one record; inserting/updating requires rewriting the file."
+            keywords: [["slow", "rewrit", "insert", "update", "whole file"]]
+          - id: q1b_dir_advantage
+            marks: 1
+            answer: "Direct advantage: very fast retrieval/update of individual records; supports online processing."
+            keywords: [["fast", "quick", "online", "real-time", "directly"]]
+          - id: q1b_dir_disadvantage
+            marks: 1
+            answer: "Direct disadvantage: more complex/costly (needs addressing/hashing); may waste space; less efficient for whole-file processing."
+            keywords: [["complex", "costly", "expensive", "hash", "waste", "space", "inefficient"]]
+      - id: q1c
+        label: "(c)"
+        text: "Define Seek Time and Rotational Delay, with one practical example of each."
+        points:
+          - id: q1c_seek_definition
+            marks: 2
+            answer: "Seek time: the time for the read/write head (access arm) to move to the track/cylinder where the required data is located."
+            keywords: [["seek"], ["head", "access arm", "arm"], ["track", "cylinder", "move", "position"]]
+          - id: q1c_seek_example
+            marks: 1
+            answer: "Example: an HDD with an average seek time of about 9 ms moving the arm across tracks."
+            keywords: [["example", "e.g", "hdd", "ms", "milliseconds", "disk", "9"]]
+          - id: q1c_rot_definition
+            marks: 2
+            answer: "Rotational delay (latency): the time for the required sector to rotate under the read/write head once the head is on the correct track."
+            keywords: [["rotational", "latency", "rotation"], ["sector", "rotate", "under the head", "under the read"], ["track", "time", "revolution"]]
+          - id: q1c_rot_example
+            marks: 1
+            answer: "Example: on a 7,200 rpm disk one revolution is about 8.33 ms, so average rotational delay is about 4.17 ms."
+            keywords: [["rpm", "7200", "revolution", "8.33", "4.17", "example", "ms"]]
+
+  #
+  # ------------------------------- QUESTION 2 ------------------------------ #
+  #
+  - id: q2
+    number: 2
+    title: "Block allocation, seek/read operations, update/delete"
+    max_marks: 20
+    parts:
+      - id: q2a
+        label: "(a)"
+        text: "A 10 KB file is stored in 4 KB blocks: find the number of blocks, the allocation, the unused space and the reason."
+        points:
+          - id: q2a_number_of_blocks
+            marks: 2
+            answer: "Number of blocks = 10 KB / 4 KB = 2.5 -> 3 blocks (rounded up)."
+            keywords: [["10", "4"], ["block", "blocks"], ["3", "three", "2.5", "round"]]
+          - id: q2a_allocation
+            marks: 2
+            answer: "Block 1 = 4 KB (full), Block 2 = 4 KB (full), Block 3 = 2 KB used / 2 KB free."
+            keywords: [["4", "4", "2"], ["block", "allocat"], ["full", "used", "free"]]
+          - id: q2a_unused_space
+            marks: 2
+            answer: "Total allocated = 3 x 4 KB = 12 KB; unused space = 12 KB - 10 KB = 2 KB."
+            keywords: [["12", "unused", "free", "wast"], ["2", "kb", "space"]]
+          - id: q2a_reason
+            marks: 2
+            answer: "A block is the smallest unit of allocation; a partly-filled block cannot be shared, so the remaining 2 KB is wasted (internal fragmentation)."
+            keywords: [["internal fragmentation", "fragment", "smallest", "unit"], ["cannot be shared", "not shared", "waste", "partly", "whole block"]]
+      - id: q2b
+        label: "(b)"
+        text: "Explain the purpose of the Seek and Read operations."
+        points:
+          - id: q2b_seek
+            marks: 3
+            answer: "Seek repositions the file pointer/disk head to a specified location so the next read/write happens there; it transfers no data; used for direct access."
+            keywords: [["seek"], ["pointer", "head", "position", "location"], ["no data", "does not transfer", "without transferring", "direct"]]
+          - id: q2b_read
+            marks: 3
+            answer: "Read transfers data/records from secondary storage into main memory from the current pointer position, then advances the pointer."
+            keywords: [["read"], ["transfer", "copy", "into memory", "main memory", "buffer"], ["pointer", "advance", "secondary storage", "disk"]]
+      - id: q2c
+        label: "(c)"
+        text: "Distinguish between Update and Delete operations, with one example of each."
+        points:
+          - id: q2c_update
+            marks: 3
+            answer: "Update modifies the contents of an existing record (one or more fields) while it stays in the file, e.g. changing a phone number or account balance."
+            keywords: [["update", "modify", "change"], ["record", "existing", "field", "contents"], ["phone", "balance", "example", "number"]]
+          - id: q2c_delete
+            marks: 3
+            answer: "Delete removes an entire record/file from storage so it no longer exists, e.g. removing a withdrawn student's record."
+            keywords: [["delete", "remove"], ["record", "file", "entire", "whole", "storage"], ["withdraw", "left", "example", "no longer"]]
+
+  #
+  # ------------------------------- QUESTION 3 ------------------------------ #
+  #
+  - id: q3
+    number: 3
+    title: "Buffers and buffer sizing"
+    max_marks: 20
+    parts:
+      - id: q3a
+        label: "(a)"
+        text: "Define Buffer and state three functions of a buffer."
+        points:
+          - id: q3a_definition
+            marks: 2
+            answer: "A buffer is a temporary storage area in main memory that holds data while it is transferred between two devices/processes operating at different speeds (e.g. CPU and I/O device)."
+            keywords: [["buffer"], ["temporary", "temporarily", "temporary storage"], ["memory", "main memory"], ["transfer", "between", "different speed", "speed"]]
+          - id: q3a_function_speed
+            marks: 2
+            answer: "Compensates for speed differences between the CPU/memory and slower I/O devices."
+            keywords: [["speed", "slow", "faster", "difference"], ["cpu", "memory", "i/o", "device"]]
+          - id: q3a_function_io
+            marks: 2
+            answer: "Reduces the number of physical I/O operations by transferring data in blocks."
+            keywords: [["reduce", "fewer", "number", "less"], ["i/o", "operation", "block", "physical", "transfer"]]
+          - id: q3a_function_overlap
+            marks: 2
+            answer: "Allows overlap of processing and I/O (one buffer is processed while another is filled)."
+            keywords: [["overlap", "in parallel", "simultaneous", "at the same time"], ["process", "i/o", "input/output", "cpu", "fill"]]
+      - id: q3b
+        label: "(b)"
+        text: "A file is 90 KB and a buffer is 80 KB: how many buffers are required?"
+        points:
+          - id: q3b_formula
+            marks: 2
+            answer: "Number of buffers = file size / buffer size."
+            keywords: [["buffer", "buffers"], ["file size", "/", "divide", "buffer size", "number"], ["=", "formula"]]
+          - id: q3b_substitution
+            marks: 2
+            answer: "90 KB / 80 KB = 1.125."
+            keywords: [["90", "80", "1.125"]]
+          - id: q3b_answer
+            marks: 2
+            answer: "Round up => 2 buffers."
+            keywords: [["2", "two"], ["round", "up"]]
+      - id: q3c
+        label: "(c)"
+        text: "A file is 2 GB and a buffer is 512 MB: how many buffers are required?"
+        points:
+          - id: q3c_conversion
+            marks: 2
+            answer: "Convert to the same unit: 2 GB = 2048 MB (accept 2000 MB)."
+            keywords: [["2 gb", "2048", "2000", "1024", "convert", "mb"]]
+          - id: q3c_division
+            marks: 2
+            answer: "2048 MB / 512 MB = 4."
+            keywords: [["2048", "512", "4", "divide", "/"]]
+          - id: q3c_answer
+            marks: 2
+            answer: "4 buffers."
+            keywords: [["4", "four", "buffer"]]
+
+  #
+  # ------------------------------- QUESTION 4 ------------------------------ #
+  #
+  - id: q4
+    number: 4
+    title: "Transaction vs Master files, GFS backup"
+    max_marks: 20
+    parts:
+      - id: q4a
+        label: "(a)"
+        text: "Differentiate between a Transaction file and a Master file."
+        points:
+          - id: q4a_content
+            marks: 2
+            answer: "Content: transaction = day-to-day events/changes (sales, deposits); master = main permanent records of an entity (customer, employee)."
+            keywords: [["transaction", "event", "change", "day"], ["master", "permanent", "main", "details", "record"]]
+          - id: q4a_lifespan
+            marks: 2
+            answer: "Life span: transaction = temporary/short-term; master = permanent/long-term."
+            keywords: [["temporary", "short-term", "short term"], ["permanent", "long-term", "long term"]]
+          - id: q4a_purpose
+            marks: 2
+            answer: "Purpose: the transaction file updates the master file; the master is the reference source."
+            keywords: [["update", "transaction"], ["master", "reference", "source"]]
+          - id: q4a_examples
+            marks: 2
+            answer: "Examples: transaction = daily sales/hours-worked file; master = payroll/stock/student master file."
+            keywords: [["sales", "hours-worked", "hours worked"], ["payroll", "stock", "student", "master"]]
+      - id: q4b
+        label: "(b)"
+        text: "Why is a transaction file temporary while a master file is permanent?"
+        points:
+          - id: q4b_transaction
+            marks: 3
+            answer: "A transaction file collects changes for a period (day/week); once it has updated the master its purpose is served, so it can be discarded or archived."
+            keywords: [["period", "day", "week", "transaction"], ["update", "used"], ["discard", "archiv", "temporary", "no longer"]]
+          - id: q4b_master
+            marks: 3
+            answer: "A master file holds the core reference data needed continuously and is only updated, not replaced, so it is kept permanently."
+            keywords: [["master", "continu", "permanent"], ["reference", "core", "balance", "account", "name"], ["update", "not replaced", "kept"]]
+      - id: q4c
+        label: "(c)"
+        text: "Define the Grandfather-Father-Son (GFS) backup method."
+        points:
+          - id: q4c_definition
+            marks: 3
+            answer: "GFS keeps three generations of a master file: Son (newest/current), Father (previous) and Grandfather (oldest)."
+            keywords: [["grandfather", "father", "son", "gfs"], ["three", "generation", "3"], ["master", "backup", "version"]]
+          - id: q4c_process
+            marks: 3
+            answer: "Each update run creates a new Son from the Father plus the transaction file; a lost/corrupted file can be re-created from an older generation and the transaction file; the oldest is then reused (rotated)."
+            keywords: [["son", "father", "transaction"], ["re-create", "recover", "lost", "corrupt", "restore"], ["rotate", "reuse", "recycle"]]
+
+  #
+  # ------------------------------- QUESTION 5 ------------------------------ #
+  #
+  - id: q5
+    number: 5
+    title: "File organization, methods and operations"
+    max_marks: 20
+    parts:
+      - id: q5a
+        label: "(a)"
+        text: "Differentiate between file organization and file re-organization."
+        points:
+          - id: q5a_organization
+            marks: 3
+            answer: "File organization is the way records are arranged and stored on a storage medium so they can be accessed and processed efficiently (sequential, indexed, random)."
+            keywords: [["organization", "arrange", "arrangement", "stored", "store"], ["record", "medium", "storage"], ["access", "process", "efficient"]]
+          - id: q5a_reorganization
+            marks: 3
+            answer: "File re-organization restructures/rewrites an existing file to restore efficiency - removing deleted records, merging overflow areas, re-sorting, rebuilding indexes."
+            keywords: [["re-organi", "reorgani", "restructur", "rewrit"], ["file", "efficien"], ["deleted", "overflow", "merge", "sort", "index"]]
+      - id: q5b
+        label: "(b)"
+        text: "Mention four methods of file organization."
+        points:
+          - id: q5b_serial
+            marks: 2
+            answer: "Serial (heap/pile) file organization."
+            keywords: [["serial", "heap", "pile"]]
+          - id: q5b_sequential
+            marks: 2
+            answer: "Sequential file organization."
+            keywords: [["sequential"]]
+          - id: q5b_indexed
+            marks: 2
+            answer: "Indexed-sequential file organization."
+            keywords: [["index", "indexed"]]
+          - id: q5b_random
+            marks: 2
+            answer: "Random (direct/hashed) file organization."
+            keywords: [["random", "direct", "hash"]]
+      - id: q5c
+        label: "(c)"
+        text: "Draw and explain file operations."
+        points:
+          - id: q5c_diagram
+            marks: 2
+            answer: "A neat, correctly labelled diagram of file operations."
+            keywords: [["diagram", "figure", "flowchart", "chart"]]
+          - id: q5c_operations
+            marks: 4
+            answer: "Explain any six operations: Create, Open, Read, Write/Append, Update, Seek, Close, Delete."
+            keywords: [["create"], ["open"], ["read"], ["write", "append"], ["update", "seek", "close", "delete"]]
+            # NOTE: q5c_diagram cannot be verified from plain text offline; it is
+            # credited when the model (or a human) confirms a diagram is present.
+
+  #
+  # ------------------------------- QUESTION 6 ------------------------------ #
+  #
+  - id: q6
+    number: 6
+    title: "Stack, Queue, Linear vs Non-linear structures"
+    max_marks: 20
+    parts:
+      - id: q6a
+        label: "(a)"
+        text: "Define STACK and explain the LIFO principle with an example."
+        points:
+          - id: q6a_definition
+            marks: 2
+            answer: "A stack is a linear data structure in which insertion (PUSH) and deletion (POP) take place at only one end, called the TOP."
+            keywords: [["stack"], ["push", "pop"], ["one end", "top", "single end"]]
+          - id: q6a_lifo
+            marks: 3
+            answer: "LIFO: the last element inserted is the first element to be removed."
+            keywords: [["lifo", "last in first out"], ["last"], ["first", "removed", "out"]]
+          - id: q6a_example
+            marks: 2
+            answer: "Example: a pile of plates; also undo, browser back button, function calls."
+            keywords: [["plate", "undo", "back button", "back", "function call", "pile"]]
+      - id: q6b
+        label: "(b)"
+        text: "Define QUEUE and explain the FIFO principle with an example."
+        points:
+          - id: q6b_definition
+            marks: 2
+            answer: "A queue is a linear data structure in which insertion (ENQUEUE) takes place at the REAR and deletion (DEQUEUE) at the FRONT."
+            keywords: [["queue"], ["enqueue", "insert", "rear", "back"], ["dequeue", "delete", "remove", "front"]]
+          - id: q6b_fifo
+            marks: 3
+            answer: "FIFO: the first element inserted is the first element to be removed."
+            keywords: [["fifo", "first in first out"], ["first"], ["removed", "out", "served"]]
+          - id: q6b_example
+            marks: 2
+            answer: "Example: people queuing at a bank/ATM; also printer queue, CPU job scheduling."
+            keywords: [["bank", "atm", "printer", "cpu", "schedul"]]
+      - id: q6c
+        label: "(c)"
+        text: "Differentiate between Linear and Non-Linear data structures."
+        points:
+          - id: q6c_structures
+            marks: 2
+            answer: "Arrangement/levels: linear = a sequence, single level, one predecessor and successor; non-linear = hierarchical/network, multiple levels."
+            keywords: [["sequence", "predecessor", "successor", "single level", "linear"], ["hierarch", "network", "multiple level", "non-linear", "nonlinear", "tree", "graph"]]
+          - id: q6c_traversal
+            marks: 2
+            answer: "Traversal: linear structures are traversed in a single run; non-linear cannot be traversed in a single run."
+            keywords: [["traverse", "traversal", "run"], ["single", "one", "cannot", "not"]]
+          - id: q6c_examples
+            marks: 2
+            answer: "Examples: linear = array, stack, queue, linked list; non-linear = tree, graph."
+            keywords: [["array", "stack", "queue", "linked list"], ["tree", "graph"]]
+
+  #
+  # ------------------------------- QUESTION 7 ------------------------------ #
+  #
+  - id: q7
+    number: 7
+    title: "Magnetic disk, disk cartridge, HDD"
+    max_marks: 20
+    parts:
+      - id: q7a
+        label: "(a)"
+        text: "What is a magnetic disk? How is data stored and retrieved on it?"
+        points:
+          - id: q7a_definition
+            marks: 2
+            answer: "A magnetic disk is a direct-access secondary storage device with one or more circular platters coated with magnetisable material on which data is recorded magnetically."
+            keywords: [["magnetic disk"], ["platter", "circular", "disk"], ["magnet", "coated", "secondary storage", "direct access"]]
+          - id: q7a_storage
+            marks: 2
+            answer: "Storage: the surface is divided into concentric tracks and sectors (tracks on all platters form a cylinder); the read/write head magnetises areas to represent 0 and 1."
+            keywords: [["track", "sector", "cylinder"], ["write", "store", "magnet", "binary", "0", "1"]]
+          - id: q7a_retrieval
+            marks: 2
+            answer: "Retrieval: the arm seeks to the track, the disk rotates the sector under the head, and the head senses the magnetic pattern and converts it to signals (data transfer)."
+            keywords: [["read", "retriev", "sense", "head"], ["seek", "rotat", "transfer", "signal"]]
+          - id: q7a_address
+            marks: 2
+            answer: "Data is located by its address (cylinder/track, surface/head, sector), allowing direct access."
+            keywords: [["address", "cylinder", "track", "surface", "head", "sector"], ["direct access", "locate", "directly"]]
+      - id: q7b
+        label: "(b)"
+        text: "What is a disk cartridge? How does it differ from an ordinary magnetic disk?"
+        points:
+          - id: q7b_definition
+            marks: 2
+            answer: "A disk cartridge is a removable magnetic disk enclosed in a sealed protective case that can be inserted into and removed from a drive (e.g. Zip disk, Jaz)."
+            keywords: [["cartridge", "removable", "sealed", "case", "enclose"], ["disk", "zip", "jaz", "drive"]]
+          - id: q7b_removable
+            marks: 2
+            answer: "Difference: a cartridge is removable/portable and can be stored offline for backup, whereas a fixed magnetic disk is permanently mounted in the drive."
+            keywords: [["removable", "portable", "remove"], ["fixed", "permanent", "mounted", "backup"]]
+          - id: q7b_protection
+            marks: 2
+            answer: "Difference: the sealed casing protects it from dust/damage; it usually has smaller capacity and slower access than a fixed hard disk."
+            keywords: [["sealed", "protect", "dust", "damage", "security"], ["capacity", "smaller", "slower", "fixed"]]
+      - id: q7c
+        label: "(c)"
+        text: "Give the meaning of Hard Disk Drive (HDD) and its major characteristics."
+        points:
+          - id: q7c_meaning
+            marks: 2
+            answer: "An HDD is a non-volatile secondary storage device that stores data on rigid, rapidly rotating magnetic platters read and written by heads on a moving actuator arm, sealed in one unit."
+            keywords: [["hdd", "hard disk drive", "hard disk"], ["non-volatile", "non volatile", "rigid", "platter", "rotat", "magnet"], ["head", "actuator", "sealed"]]
+          - id: q7c_capacity
+            marks: 2
+            answer: "Non-volatile; large capacity (hundreds of GB to several TB) at low cost per GB; direct (random) access."
+            keywords: [["non-volatile", "capacity", "large", "cost", "direct access", "gb", "tb", "retains"]]
+          - id: q7c_mechanical
+            marks: 2
+            answer: "Speed measured by spindle speed (5,400/7,200/10,000 rpm), seek time and transfer rate; has mechanical moving parts - susceptible to shock, noise, heat and wear."
+            keywords: [["rpm", "5400", "5,400", "7200", "7,200", "seek", "transfer"], ["mechanical", "moving parts", "shock", "noise", "heat", "wear"]]

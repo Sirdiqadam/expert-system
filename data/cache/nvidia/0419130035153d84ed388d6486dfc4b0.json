@@ -1,0 +1,5 @@
+{
+  "provider": "nvidia",
+  "model": "stepfun-ai/step-5-preview",
+  "text": "```json\n{\n  \"covered\": [\n    {\n      \"point_id\": \"q4a_content\",\n      \"quote\": \"A Transaction file is er file is regarded as temporary file like pos transaction in short time transaction or tranfer money from to other sender.\"\n    },\n    {\n      \"point_id\": \"q4a_lifespan\",\n      \"quote\": \"temporary file like pos transaction in short time transaction. Master file is the refas to the porment file or long term defer\"\n    },\n    {\n      \"point_id\": \"q4c_definition\",\n      \"quote\": \"Dehre Grandfathar - fathor son (G.Ps) Benloup method.\"\n    }\n  ]\n}\n```"
+}

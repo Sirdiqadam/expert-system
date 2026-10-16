@@ -1,0 +1,33 @@
+rubric_id: com226_exam_v1
+max_total: 100
+aggregate: best_n
+best_n: 5
+criteria:
+- id: q1
+  name: Q1. File access methods, seek time & rotational delay
+  max_score: 20
+  mode: points
+- id: q2
+  name: Q2. Block allocation, seek/read operations, update/delete
+  max_score: 20
+  mode: points
+- id: q3
+  name: Q3. Buffers and buffer sizing
+  max_score: 20
+  mode: points
+- id: q4
+  name: Q4. Transaction vs Master files, GFS backup
+  max_score: 20
+  mode: points
+- id: q5
+  name: Q5. File organization, methods and operations
+  max_score: 20
+  mode: points
+- id: q6
+  name: Q6. Stack, Queue, Linear vs Non-linear structures
+  max_score: 20
+  mode: points
+- id: q7
+  name: Q7. Magnetic disk, disk cartridge, HDD
+  max_score: 20
+  mode: points

@@ -1,0 +1,44 @@
+# Argumentative / opinion essay rubric.
+# 4 analytic criteria, 4 levels each, max_total = 40.
+rubric_id: argumentative_v1
+max_total: 40
+criteria:
+  - id: content
+    name: Content and Ideas
+    max_score: 10
+    weight: 1.0
+    levels:
+      - {level: 4, range: [9, 10], descriptor: "Clear thesis, 3+ developed arguments with evidence, counterargument rebutted"}
+      - {level: 3, range: [7, 8], descriptor: "Clear thesis, 2-3 arguments with some evidence"}
+      - {level: 2, range: [4, 6], descriptor: "Thesis unclear or arguments thin"}
+      - {level: 1, range: [0, 3], descriptor: "No discernible thesis or argument"}
+
+  - id: organization
+    name: Organization
+    max_score: 10
+    weight: 1.0
+    levels:
+      - {level: 4, range: [9, 10], descriptor: "Clear structure, well-linked paragraphs, strong coherence"}
+      - {level: 3, range: [7, 8], descriptor: "Clear overall structure with mostly linked paragraphs"}
+      - {level: 2, range: [4, 6], descriptor: "Structure present but weak or inconsistent linking"}
+      - {level: 1, range: [0, 3], descriptor: "No discernible structure"}
+
+  - id: language
+    name: Language and Grammar
+    max_score: 10
+    weight: 1.0
+    levels:
+      - {level: 4, range: [9, 10], descriptor: "Varied accurate sentences, few errors, wide vocabulary"}
+      - {level: 3, range: [7, 8], descriptor: "Generally accurate with some errors that do not impede meaning"}
+      - {level: 2, range: [4, 6], descriptor: "Frequent errors that sometimes impede meaning"}
+      - {level: 1, range: [0, 3], descriptor: "Pervasive errors that impede meaning"}
+
+  - id: mechanics
+    name: Mechanics
+    max_score: 10
+    weight: 1.0
+    levels:
+      - {level: 4, range: [9, 10], descriptor: "Accurate spelling, punctuation and capitalization"}
+      - {level: 3, range: [7, 8], descriptor: "Minor spelling/punctuation slips"}
+      - {level: 2, range: [4, 6], descriptor: "Noticeable spelling/punctuation errors"}
+      - {level: 1, range: [0, 3], descriptor: "Pervasive mechanical errors"}

@@ -1,0 +1,5 @@
+{
+  "provider": "nvidia",
+  "model": "meta/llama-3.2-11b-vision-instruct",
+  "text": "Do not write in either margin\nCandidate Number.2.425/p.Harry/CS/001/page No.............\nQuestion............Write on both sides of the Paper\nFile Access method: is the way of read or write and information of the staning data, and access to retrieval.\nTypes of File Access method.\n1 Sequential Access method.\n2 Indexed Access method.\n3 Direct Random Access method.\nB Compare Sequential Access method and Direct Access method and clearly state one advantage and one disadvantage of each.\nDefine Seek Time: is the time of pressing of seek the time and seekup the all the file in the computer program.\nRelational Yelow: the process of updating of every the system in the team of tasks of programm."
+}

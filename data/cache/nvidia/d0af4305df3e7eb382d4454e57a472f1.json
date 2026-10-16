@@ -1,0 +1,5 @@
+{
+  "provider": "nvidia",
+  "model": "stepfun-ai/step-5-preview",
+  "text": "{\"content\":{\"score\":7,\"justification\":\"Clear thesis with two developed arguments (financial cost and self-expression) supported by some evidence; a counterargument is raised but only briefly rebutted, and the third point promised in the thesis (behaviour) is not developed.\"},\"organization\":{\"score\":7,\"justification\":\"Clear introduction-body-conclusion structure with basic linking devices; paragraphs follow a logical order, but the essay is very short and body paragraphs are underdeveloped.\"},\"language\":{\"score\":8,\"justification\":\"Generally accurate sentences with appropriate vocabulary; limited sentence variety and complexity prevent a top-band score.\"},\"mechanics\":{\"score\":9,\"justification\":\"Spelling, punctuation, and capitalization are accurate with no noticeable errors.\"}}"
+}

@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ees"
+version = "0.1.0"
+description = "Explainable Hybrid Expert System for Marking Student Essays"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Essay Expert System Team" }]
+dependencies = [
+    "pydantic>=2",
+    "pyyaml>=6",
+    "numpy>=1.26",
+    "pandas>=2",
+    "pillow>=10",
+    "pypdfium2>=4",
+]
+
+[project.optional-dependencies]
+ui = ["streamlit>=1.30"]
+nlp = ["textstat", "pyspellchecker"]
+llm = ["anthropic"]
+dev = ["pytest>=7"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"

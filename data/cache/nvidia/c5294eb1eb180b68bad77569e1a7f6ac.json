@@ -1,0 +1,5 @@
+{
+  "provider": "nvidia",
+  "model": "stepfun-ai/step-5-preview",
+  "text": "{\"covered\": [{\"point_id\": \"q1a_definition\", \"quote\": \"File access method is the way of read or write and information of the storing data, and access to retrieval.\"}]}"
+}

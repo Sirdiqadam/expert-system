@@ -1,0 +1,5 @@
+{
+  "provider": "nvidia",
+  "model": "meta/llama-3.2-11b-vision-instruct",
+  "text": "Candidate Number: 2025/PHARM/03/004 Page No. Question 6 Write on both sides of the Paper\n\nDo not write in either margin\n\nDefine Stacks: Is a linear data structure that store data according to the life lost in first out.\n\nExample of Stack:\n\nA 13 < 12\n\nIs the linear Container is the last element is removed, stack the is removed.\n\n13 Define Queue is the Container the store data according to the FIFO in the first in first out.\n\nExample Two Queue principle\n\n1) 2 3 4\n\nand the first row is remove the last one in the FIFO"
+}

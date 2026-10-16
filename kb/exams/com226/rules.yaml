@@ -1,0 +1,882 @@
+- id: R-Q1A-DEFINITION
+  criterion: q1
+  description: (a) A file access method is the technique/procedure used by the OS or program to locate,
+    read and write records stored in a file on a storage device.
+  if:
+    fact: covered_q1a_definition
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q1
+    amount: 2.0
+  explain: 'Q1(a): A file access method is the technique/procedure used by the OS or program to locate,
+    read and write records stored in a file on a storage device. (+2)'
+- id: R-Q1A-SEQUENTIAL
+  criterion: q1
+  description: '(a) Sequential access: records are read/written one after another in the order stored,
+    from the beginning of the file (e.g. magnetic tape, payroll).'
+  if:
+    fact: covered_q1a_sequential
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q1
+    amount: 2.0
+  explain: 'Q1(a): Sequential access: records are read/written one after another in the order stored,
+    from the beginning of the file (e.g. magnetic tape, payroll). (+2)'
+- id: R-Q1A-DIRECT
+  criterion: q1
+  description: '(a) Direct (random/relative) access: any record is accessed directly by its address or
+    key without reading preceding records (e.g. hard disk, ATM lookup).'
+  if:
+    fact: covered_q1a_direct
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q1
+    amount: 2.0
+  explain: 'Q1(a): Direct (random/relative) access: any record is accessed directly by its address or
+    key without reading preceding records (e.g. hard disk, ATM lookup). (+2)'
+- id: R-Q1A-INDEXED
+  criterion: q1
+  description: '(a) Indexed (indexed-sequential) access: an index of keys and addresses is searched, then
+    the record is accessed directly; the file can also be processed sequentially (e.g. library catalogue).'
+  if:
+    fact: covered_q1a_indexed
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q1
+    amount: 2.0
+  explain: 'Q1(a): Indexed (indexed-sequential) access: an index of keys and addresses is searched, then
+    the record is accessed directly; the file can also be processed sequentially (e.g. library catalogue).
+    (+2)'
+- id: R-Q1B-COMPARISON
+  criterion: q1
+  description: (b) Any two valid points of comparison, e.g. order of access / speed for a single record
+    / typical medium / suitability.
+  if:
+    fact: covered_q1b_comparison
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q1
+    amount: 2.0
+  explain: 'Q1(b): Any two valid points of comparison, e.g. order of access / speed for a single record
+    / typical medium / suitability. (+2)'
+- id: R-Q1B-SEQ-ADVANTAGE
+  criterion: q1
+  description: '(b) Sequential advantage: simple to organise and economical; efficient when most records
+    are processed.'
+  if:
+    fact: covered_q1b_seq_advantage
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q1
+    amount: 1.0
+  explain: 'Q1(b): Sequential advantage: simple to organise and economical; efficient when most records
+    are processed. (+1)'
+- id: R-Q1B-SEQ-DISADVANTAGE
+  criterion: q1
+  description: '(b) Sequential disadvantage: slow for retrieving one record; inserting/updating requires
+    rewriting the file.'
+  if:
+    fact: covered_q1b_seq_disadvantage
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q1
+    amount: 1.0
+  explain: 'Q1(b): Sequential disadvantage: slow for retrieving one record; inserting/updating requires
+    rewriting the file. (+1)'
+- id: R-Q1B-DIR-ADVANTAGE
+  criterion: q1
+  description: '(b) Direct advantage: very fast retrieval/update of individual records; supports online
+    processing.'
+  if:
+    fact: covered_q1b_dir_advantage
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q1
+    amount: 1.0
+  explain: 'Q1(b): Direct advantage: very fast retrieval/update of individual records; supports online
+    processing. (+1)'
+- id: R-Q1B-DIR-DISADVANTAGE
+  criterion: q1
+  description: '(b) Direct disadvantage: more complex/costly (needs addressing/hashing); may waste space;
+    less efficient for whole-file processing.'
+  if:
+    fact: covered_q1b_dir_disadvantage
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q1
+    amount: 1.0
+  explain: 'Q1(b): Direct disadvantage: more complex/costly (needs addressing/hashing); may waste space;
+    less efficient for whole-file processing. (+1)'
+- id: R-Q1C-SEEK-DEFINITION
+  criterion: q1
+  description: '(c) Seek time: the time for the read/write head (access arm) to move to the track/cylinder
+    where the required data is located.'
+  if:
+    fact: covered_q1c_seek_definition
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q1
+    amount: 2.0
+  explain: 'Q1(c): Seek time: the time for the read/write head (access arm) to move to the track/cylinder
+    where the required data is located. (+2)'
+- id: R-Q1C-SEEK-EXAMPLE
+  criterion: q1
+  description: '(c) Example: an HDD with an average seek time of about 9 ms moving the arm across tracks.'
+  if:
+    fact: covered_q1c_seek_example
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q1
+    amount: 1.0
+  explain: 'Q1(c): Example: an HDD with an average seek time of about 9 ms moving the arm across tracks.
+    (+1)'
+- id: R-Q1C-ROT-DEFINITION
+  criterion: q1
+  description: '(c) Rotational delay (latency): the time for the required sector to rotate under the read/write
+    head once the head is on the correct track.'
+  if:
+    fact: covered_q1c_rot_definition
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q1
+    amount: 2.0
+  explain: 'Q1(c): Rotational delay (latency): the time for the required sector to rotate under the read/write
+    head once the head is on the correct track. (+2)'
+- id: R-Q1C-ROT-EXAMPLE
+  criterion: q1
+  description: '(c) Example: on a 7,200 rpm disk one revolution is about 8.33 ms, so average rotational
+    delay is about 4.17 ms.'
+  if:
+    fact: covered_q1c_rot_example
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q1
+    amount: 1.0
+  explain: 'Q1(c): Example: on a 7,200 rpm disk one revolution is about 8.33 ms, so average rotational
+    delay is about 4.17 ms. (+1)'
+- id: R-Q2A-NUMBER-OF-BLOCKS
+  criterion: q2
+  description: (a) Number of blocks = 10 KB / 4 KB = 2.5 -> 3 blocks (rounded up).
+  if:
+    fact: covered_q2a_number_of_blocks
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q2
+    amount: 2.0
+  explain: 'Q2(a): Number of blocks = 10 KB / 4 KB = 2.5 -> 3 blocks (rounded up). (+2)'
+- id: R-Q2A-ALLOCATION
+  criterion: q2
+  description: (a) Block 1 = 4 KB (full), Block 2 = 4 KB (full), Block 3 = 2 KB used / 2 KB free.
+  if:
+    fact: covered_q2a_allocation
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q2
+    amount: 2.0
+  explain: 'Q2(a): Block 1 = 4 KB (full), Block 2 = 4 KB (full), Block 3 = 2 KB used / 2 KB free. (+2)'
+- id: R-Q2A-UNUSED-SPACE
+  criterion: q2
+  description: (a) Total allocated = 3 x 4 KB = 12 KB; unused space = 12 KB - 10 KB = 2 KB.
+  if:
+    fact: covered_q2a_unused_space
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q2
+    amount: 2.0
+  explain: 'Q2(a): Total allocated = 3 x 4 KB = 12 KB; unused space = 12 KB - 10 KB = 2 KB. (+2)'
+- id: R-Q2A-REASON
+  criterion: q2
+  description: (a) A block is the smallest unit of allocation; a partly-filled block cannot be shared,
+    so the remaining 2 KB is wasted (internal fragmentation).
+  if:
+    fact: covered_q2a_reason
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q2
+    amount: 2.0
+  explain: 'Q2(a): A block is the smallest unit of allocation; a partly-filled block cannot be shared,
+    so the remaining 2 KB is wasted (internal fragmentation). (+2)'
+- id: R-Q2B-SEEK
+  criterion: q2
+  description: (b) Seek repositions the file pointer/disk head to a specified location so the next read/write
+    happens there; it transfers no data; used for direct access.
+  if:
+    fact: covered_q2b_seek
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q2
+    amount: 3.0
+  explain: 'Q2(b): Seek repositions the file pointer/disk head to a specified location so the next read/write
+    happens there; it transfers no data; used for direct access. (+3)'
+- id: R-Q2B-READ
+  criterion: q2
+  description: (b) Read transfers data/records from secondary storage into main memory from the current
+    pointer position, then advances the pointer.
+  if:
+    fact: covered_q2b_read
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q2
+    amount: 3.0
+  explain: 'Q2(b): Read transfers data/records from secondary storage into main memory from the current
+    pointer position, then advances the pointer. (+3)'
+- id: R-Q2C-UPDATE
+  criterion: q2
+  description: (c) Update modifies the contents of an existing record (one or more fields) while it stays
+    in the file, e.g. changing a phone number or account balance.
+  if:
+    fact: covered_q2c_update
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q2
+    amount: 3.0
+  explain: 'Q2(c): Update modifies the contents of an existing record (one or more fields) while it stays
+    in the file, e.g. changing a phone number or account balance. (+3)'
+- id: R-Q2C-DELETE
+  criterion: q2
+  description: (c) Delete removes an entire record/file from storage so it no longer exists, e.g. removing
+    a withdrawn student's record.
+  if:
+    fact: covered_q2c_delete
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q2
+    amount: 3.0
+  explain: 'Q2(c): Delete removes an entire record/file from storage so it no longer exists, e.g. removing
+    a withdrawn student''s record. (+3)'
+- id: R-Q3A-DEFINITION
+  criterion: q3
+  description: (a) A buffer is a temporary storage area in main memory that holds data while it is transferred
+    between two devices/processes operating at different speeds (e.g. CPU and I/O device).
+  if:
+    fact: covered_q3a_definition
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q3
+    amount: 2.0
+  explain: 'Q3(a): A buffer is a temporary storage area in main memory that holds data while it is transferred
+    between two devices/processes operating at different speeds (e.g. CPU and I/O device). (+2)'
+- id: R-Q3A-FUNCTION-SPEED
+  criterion: q3
+  description: (a) Compensates for speed differences between the CPU/memory and slower I/O devices.
+  if:
+    fact: covered_q3a_function_speed
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q3
+    amount: 2.0
+  explain: 'Q3(a): Compensates for speed differences between the CPU/memory and slower I/O devices. (+2)'
+- id: R-Q3A-FUNCTION-IO
+  criterion: q3
+  description: (a) Reduces the number of physical I/O operations by transferring data in blocks.
+  if:
+    fact: covered_q3a_function_io
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q3
+    amount: 2.0
+  explain: 'Q3(a): Reduces the number of physical I/O operations by transferring data in blocks. (+2)'
+- id: R-Q3A-FUNCTION-OVERLAP
+  criterion: q3
+  description: (a) Allows overlap of processing and I/O (one buffer is processed while another is filled).
+  if:
+    fact: covered_q3a_function_overlap
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q3
+    amount: 2.0
+  explain: 'Q3(a): Allows overlap of processing and I/O (one buffer is processed while another is filled).
+    (+2)'
+- id: R-Q3B-FORMULA
+  criterion: q3
+  description: (b) Number of buffers = file size / buffer size.
+  if:
+    fact: covered_q3b_formula
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q3
+    amount: 2.0
+  explain: 'Q3(b): Number of buffers = file size / buffer size. (+2)'
+- id: R-Q3B-SUBSTITUTION
+  criterion: q3
+  description: (b) 90 KB / 80 KB = 1.125.
+  if:
+    fact: covered_q3b_substitution
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q3
+    amount: 2.0
+  explain: 'Q3(b): 90 KB / 80 KB = 1.125. (+2)'
+- id: R-Q3B-ANSWER
+  criterion: q3
+  description: (b) Round up => 2 buffers.
+  if:
+    fact: covered_q3b_answer
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q3
+    amount: 2.0
+  explain: 'Q3(b): Round up => 2 buffers. (+2)'
+- id: R-Q3C-CONVERSION
+  criterion: q3
+  description: '(c) Convert to the same unit: 2 GB = 2048 MB (accept 2000 MB).'
+  if:
+    fact: covered_q3c_conversion
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q3
+    amount: 2.0
+  explain: 'Q3(c): Convert to the same unit: 2 GB = 2048 MB (accept 2000 MB). (+2)'
+- id: R-Q3C-DIVISION
+  criterion: q3
+  description: (c) 2048 MB / 512 MB = 4.
+  if:
+    fact: covered_q3c_division
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q3
+    amount: 2.0
+  explain: 'Q3(c): 2048 MB / 512 MB = 4. (+2)'
+- id: R-Q3C-ANSWER
+  criterion: q3
+  description: (c) 4 buffers.
+  if:
+    fact: covered_q3c_answer
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q3
+    amount: 2.0
+  explain: 'Q3(c): 4 buffers. (+2)'
+- id: R-Q4A-CONTENT
+  criterion: q4
+  description: '(a) Content: transaction = day-to-day events/changes (sales, deposits); master = main
+    permanent records of an entity (customer, employee).'
+  if:
+    fact: covered_q4a_content
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q4
+    amount: 2.0
+  explain: 'Q4(a): Content: transaction = day-to-day events/changes (sales, deposits); master = main permanent
+    records of an entity (customer, employee). (+2)'
+- id: R-Q4A-LIFESPAN
+  criterion: q4
+  description: '(a) Life span: transaction = temporary/short-term; master = permanent/long-term.'
+  if:
+    fact: covered_q4a_lifespan
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q4
+    amount: 2.0
+  explain: 'Q4(a): Life span: transaction = temporary/short-term; master = permanent/long-term. (+2)'
+- id: R-Q4A-PURPOSE
+  criterion: q4
+  description: '(a) Purpose: the transaction file updates the master file; the master is the reference
+    source.'
+  if:
+    fact: covered_q4a_purpose
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q4
+    amount: 2.0
+  explain: 'Q4(a): Purpose: the transaction file updates the master file; the master is the reference
+    source. (+2)'
+- id: R-Q4A-EXAMPLES
+  criterion: q4
+  description: '(a) Examples: transaction = daily sales/hours-worked file; master = payroll/stock/student
+    master file.'
+  if:
+    fact: covered_q4a_examples
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q4
+    amount: 2.0
+  explain: 'Q4(a): Examples: transaction = daily sales/hours-worked file; master = payroll/stock/student
+    master file. (+2)'
+- id: R-Q4B-TRANSACTION
+  criterion: q4
+  description: (b) A transaction file collects changes for a period (day/week); once it has updated the
+    master its purpose is served, so it can be discarded or archived.
+  if:
+    fact: covered_q4b_transaction
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q4
+    amount: 3.0
+  explain: 'Q4(b): A transaction file collects changes for a period (day/week); once it has updated the
+    master its purpose is served, so it can be discarded or archived. (+3)'
+- id: R-Q4B-MASTER
+  criterion: q4
+  description: (b) A master file holds the core reference data needed continuously and is only updated,
+    not replaced, so it is kept permanently.
+  if:
+    fact: covered_q4b_master
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q4
+    amount: 3.0
+  explain: 'Q4(b): A master file holds the core reference data needed continuously and is only updated,
+    not replaced, so it is kept permanently. (+3)'
+- id: R-Q4C-DEFINITION
+  criterion: q4
+  description: '(c) GFS keeps three generations of a master file: Son (newest/current), Father (previous)
+    and Grandfather (oldest).'
+  if:
+    fact: covered_q4c_definition
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q4
+    amount: 3.0
+  explain: 'Q4(c): GFS keeps three generations of a master file: Son (newest/current), Father (previous)
+    and Grandfather (oldest). (+3)'
+- id: R-Q4C-PROCESS
+  criterion: q4
+  description: (c) Each update run creates a new Son from the Father plus the transaction file; a lost/corrupted
+    file can be re-created from an older generation and the transaction file; the oldest is then reused
+    (rotated).
+  if:
+    fact: covered_q4c_process
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q4
+    amount: 3.0
+  explain: 'Q4(c): Each update run creates a new Son from the Father plus the transaction file; a lost/corrupted
+    file can be re-created from an older generation and the transaction file; the oldest is then reused
+    (rotated). (+3)'
+- id: R-Q5A-ORGANIZATION
+  criterion: q5
+  description: (a) File organization is the way records are arranged and stored on a storage medium so
+    they can be accessed and processed efficiently (sequential, indexed, random).
+  if:
+    fact: covered_q5a_organization
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q5
+    amount: 3.0
+  explain: 'Q5(a): File organization is the way records are arranged and stored on a storage medium so
+    they can be accessed and processed efficiently (sequential, indexed, random). (+3)'
+- id: R-Q5A-REORGANIZATION
+  criterion: q5
+  description: (a) File re-organization restructures/rewrites an existing file to restore efficiency -
+    removing deleted records, merging overflow areas, re-sorting, rebuilding indexes.
+  if:
+    fact: covered_q5a_reorganization
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q5
+    amount: 3.0
+  explain: 'Q5(a): File re-organization restructures/rewrites an existing file to restore efficiency -
+    removing deleted records, merging overflow areas, re-sorting, rebuilding indexes. (+3)'
+- id: R-Q5B-SERIAL
+  criterion: q5
+  description: (b) Serial (heap/pile) file organization.
+  if:
+    fact: covered_q5b_serial
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q5
+    amount: 2.0
+  explain: 'Q5(b): Serial (heap/pile) file organization. (+2)'
+- id: R-Q5B-SEQUENTIAL
+  criterion: q5
+  description: (b) Sequential file organization.
+  if:
+    fact: covered_q5b_sequential
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q5
+    amount: 2.0
+  explain: 'Q5(b): Sequential file organization. (+2)'
+- id: R-Q5B-INDEXED
+  criterion: q5
+  description: (b) Indexed-sequential file organization.
+  if:
+    fact: covered_q5b_indexed
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q5
+    amount: 2.0
+  explain: 'Q5(b): Indexed-sequential file organization. (+2)'
+- id: R-Q5B-RANDOM
+  criterion: q5
+  description: (b) Random (direct/hashed) file organization.
+  if:
+    fact: covered_q5b_random
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q5
+    amount: 2.0
+  explain: 'Q5(b): Random (direct/hashed) file organization. (+2)'
+- id: R-Q5C-DIAGRAM
+  criterion: q5
+  description: (c) A neat, correctly labelled diagram of file operations.
+  if:
+    fact: covered_q5c_diagram
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q5
+    amount: 2.0
+  explain: 'Q5(c): A neat, correctly labelled diagram of file operations. (+2)'
+- id: R-Q5C-OPERATIONS
+  criterion: q5
+  description: '(c) Explain any six operations: Create, Open, Read, Write/Append, Update, Seek, Close,
+    Delete.'
+  if:
+    fact: covered_q5c_operations
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q5
+    amount: 4.0
+  explain: 'Q5(c): Explain any six operations: Create, Open, Read, Write/Append, Update, Seek, Close,
+    Delete. (+4)'
+- id: R-Q6A-DEFINITION
+  criterion: q6
+  description: (a) A stack is a linear data structure in which insertion (PUSH) and deletion (POP) take
+    place at only one end, called the TOP.
+  if:
+    fact: covered_q6a_definition
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q6
+    amount: 2.0
+  explain: 'Q6(a): A stack is a linear data structure in which insertion (PUSH) and deletion (POP) take
+    place at only one end, called the TOP. (+2)'
+- id: R-Q6A-LIFO
+  criterion: q6
+  description: '(a) LIFO: the last element inserted is the first element to be removed.'
+  if:
+    fact: covered_q6a_lifo
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q6
+    amount: 3.0
+  explain: 'Q6(a): LIFO: the last element inserted is the first element to be removed. (+3)'
+- id: R-Q6A-EXAMPLE
+  criterion: q6
+  description: '(a) Example: a pile of plates; also undo, browser back button, function calls.'
+  if:
+    fact: covered_q6a_example
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q6
+    amount: 2.0
+  explain: 'Q6(a): Example: a pile of plates; also undo, browser back button, function calls. (+2)'
+- id: R-Q6B-DEFINITION
+  criterion: q6
+  description: (b) A queue is a linear data structure in which insertion (ENQUEUE) takes place at the
+    REAR and deletion (DEQUEUE) at the FRONT.
+  if:
+    fact: covered_q6b_definition
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q6
+    amount: 2.0
+  explain: 'Q6(b): A queue is a linear data structure in which insertion (ENQUEUE) takes place at the
+    REAR and deletion (DEQUEUE) at the FRONT. (+2)'
+- id: R-Q6B-FIFO
+  criterion: q6
+  description: '(b) FIFO: the first element inserted is the first element to be removed.'
+  if:
+    fact: covered_q6b_fifo
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q6
+    amount: 3.0
+  explain: 'Q6(b): FIFO: the first element inserted is the first element to be removed. (+3)'
+- id: R-Q6B-EXAMPLE
+  criterion: q6
+  description: '(b) Example: people queuing at a bank/ATM; also printer queue, CPU job scheduling.'
+  if:
+    fact: covered_q6b_example
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q6
+    amount: 2.0
+  explain: 'Q6(b): Example: people queuing at a bank/ATM; also printer queue, CPU job scheduling. (+2)'
+- id: R-Q6C-STRUCTURES
+  criterion: q6
+  description: '(c) Arrangement/levels: linear = a sequence, single level, one predecessor and successor;
+    non-linear = hierarchical/network, multiple levels.'
+  if:
+    fact: covered_q6c_structures
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q6
+    amount: 2.0
+  explain: 'Q6(c): Arrangement/levels: linear = a sequence, single level, one predecessor and successor;
+    non-linear = hierarchical/network, multiple levels. (+2)'
+- id: R-Q6C-TRAVERSAL
+  criterion: q6
+  description: '(c) Traversal: linear structures are traversed in a single run; non-linear cannot be traversed
+    in a single run.'
+  if:
+    fact: covered_q6c_traversal
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q6
+    amount: 2.0
+  explain: 'Q6(c): Traversal: linear structures are traversed in a single run; non-linear cannot be traversed
+    in a single run. (+2)'
+- id: R-Q6C-EXAMPLES
+  criterion: q6
+  description: '(c) Examples: linear = array, stack, queue, linked list; non-linear = tree, graph.'
+  if:
+    fact: covered_q6c_examples
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q6
+    amount: 2.0
+  explain: 'Q6(c): Examples: linear = array, stack, queue, linked list; non-linear = tree, graph. (+2)'
+- id: R-Q7A-DEFINITION
+  criterion: q7
+  description: (a) A magnetic disk is a direct-access secondary storage device with one or more circular
+    platters coated with magnetisable material on which data is recorded magnetically.
+  if:
+    fact: covered_q7a_definition
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q7
+    amount: 2.0
+  explain: 'Q7(a): A magnetic disk is a direct-access secondary storage device with one or more circular
+    platters coated with magnetisable material on which data is recorded magnetically. (+2)'
+- id: R-Q7A-STORAGE
+  criterion: q7
+  description: '(a) Storage: the surface is divided into concentric tracks and sectors (tracks on all
+    platters form a cylinder); the read/write head magnetises areas to represent 0 and 1.'
+  if:
+    fact: covered_q7a_storage
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q7
+    amount: 2.0
+  explain: 'Q7(a): Storage: the surface is divided into concentric tracks and sectors (tracks on all platters
+    form a cylinder); the read/write head magnetises areas to represent 0 and 1. (+2)'
+- id: R-Q7A-RETRIEVAL
+  criterion: q7
+  description: '(a) Retrieval: the arm seeks to the track, the disk rotates the sector under the head,
+    and the head senses the magnetic pattern and converts it to signals (data transfer).'
+  if:
+    fact: covered_q7a_retrieval
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q7
+    amount: 2.0
+  explain: 'Q7(a): Retrieval: the arm seeks to the track, the disk rotates the sector under the head,
+    and the head senses the magnetic pattern and converts it to signals (data transfer). (+2)'
+- id: R-Q7A-ADDRESS
+  criterion: q7
+  description: (a) Data is located by its address (cylinder/track, surface/head, sector), allowing direct
+    access.
+  if:
+    fact: covered_q7a_address
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q7
+    amount: 2.0
+  explain: 'Q7(a): Data is located by its address (cylinder/track, surface/head, sector), allowing direct
+    access. (+2)'
+- id: R-Q7B-DEFINITION
+  criterion: q7
+  description: (b) A disk cartridge is a removable magnetic disk enclosed in a sealed protective case
+    that can be inserted into and removed from a drive (e.g. Zip disk, Jaz).
+  if:
+    fact: covered_q7b_definition
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q7
+    amount: 2.0
+  explain: 'Q7(b): A disk cartridge is a removable magnetic disk enclosed in a sealed protective case
+    that can be inserted into and removed from a drive (e.g. Zip disk, Jaz). (+2)'
+- id: R-Q7B-REMOVABLE
+  criterion: q7
+  description: '(b) Difference: a cartridge is removable/portable and can be stored offline for backup,
+    whereas a fixed magnetic disk is permanently mounted in the drive.'
+  if:
+    fact: covered_q7b_removable
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q7
+    amount: 2.0
+  explain: 'Q7(b): Difference: a cartridge is removable/portable and can be stored offline for backup,
+    whereas a fixed magnetic disk is permanently mounted in the drive. (+2)'
+- id: R-Q7B-PROTECTION
+  criterion: q7
+  description: '(b) Difference: the sealed casing protects it from dust/damage; it usually has smaller
+    capacity and slower access than a fixed hard disk.'
+  if:
+    fact: covered_q7b_protection
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q7
+    amount: 2.0
+  explain: 'Q7(b): Difference: the sealed casing protects it from dust/damage; it usually has smaller
+    capacity and slower access than a fixed hard disk. (+2)'
+- id: R-Q7C-MEANING
+  criterion: q7
+  description: (c) An HDD is a non-volatile secondary storage device that stores data on rigid, rapidly
+    rotating magnetic platters read and written by heads on a moving actuator arm, sealed in one unit.
+  if:
+    fact: covered_q7c_meaning
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q7
+    amount: 2.0
+  explain: 'Q7(c): An HDD is a non-volatile secondary storage device that stores data on rigid, rapidly
+    rotating magnetic platters read and written by heads on a moving actuator arm, sealed in one unit.
+    (+2)'
+- id: R-Q7C-CAPACITY
+  criterion: q7
+  description: (c) Non-volatile; large capacity (hundreds of GB to several TB) at low cost per GB; direct
+    (random) access.
+  if:
+    fact: covered_q7c_capacity
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q7
+    amount: 2.0
+  explain: 'Q7(c): Non-volatile; large capacity (hundreds of GB to several TB) at low cost per GB; direct
+    (random) access. (+2)'
+- id: R-Q7C-MECHANICAL
+  criterion: q7
+  description: (c) Speed measured by spindle speed (5,400/7,200/10,000 rpm), seek time and transfer rate;
+    has mechanical moving parts - susceptible to shock, noise, heat and wear.
+  if:
+    fact: covered_q7c_mechanical
+    op: ==
+    value: true
+  then:
+  - action: add
+    criterion: q7
+    amount: 2.0
+  explain: 'Q7(c): Speed measured by spindle speed (5,400/7,200/10,000 rpm), seek time and transfer rate;
+    has mechanical moving parts - susceptible to shock, noise, heat and wear. (+2)'

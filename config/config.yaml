@@ -1,0 +1,34 @@
+# Global configuration for the Explainable Essay-Marking Expert System.
+# All paths are relative to the repository root unless absolute.
+
+mode: hybrid # rule_only | llm_only | hybrid
+
+llm:
+  provider: nvidia # mock | nvidia | anthropic
+  model: stepfun-ai/step-5-preview
+  base_url: https://integrate.api.nvidia.com/v1
+  temperature: 0.0
+  max_retries: 3
+  max_tokens: 16384 # ample budget for reasoning models (e.g. step-5-preview)
+  api_key_env: NVIDIA_API_KEY
+
+ocr:
+  enabled: true
+  # Vision model used to read scanned booklet pages (PDF/images).
+  vision_model: meta/llama-3.2-11b-vision-instruct
+  dpi: 150 # PDF render resolution
+  max_pages: 30 # refuse booklets longer than this
+  min_embedded_chars: 40 # use a digital PDF text layer when this long
+
+paths:
+  kb_dir: kb
+  cache_dir: data/cache
+  runs_dir: data/runs
+  sample_dir: data/sample_essays
+  gold_csv: data/gold/human_scores.csv
+
+thresholds:
+  borderline_margin: 1 # marks within this margin of a grade boundary -> review
+  disagreement_threshold: 5 # |llm_holistic - rule_total| above this -> review
+  low_confidence: 0.5 # LLM facts below this confidence -> review
+  min_words: 100 # essays shorter than this -> review

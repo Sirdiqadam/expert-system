@@ -1,0 +1,5 @@
+{
+  "provider": "nvidia",
+  "model": "meta/llama-3.2-11b-vision-instruct",
+  "text": "CANDIDATE: 2.25/p.Harry/CS/001/page No.............\nQUESTION: 1\nAccess\nFile access method is the way of read or write and information of the storing data, and access to retrieval.\nTypes of File access method.\n1. Sequential access method.\n2. Indexed access method.\n3. Direct Random access method.\nB\nCompare Sequential access method and direct access method and clearly state one advantage and one disadvantage of each.\nDefine Seek time is the time of pressing of seek the time and seekup the all the file in the computer program.\nRelational Yelow : the process of updating of every the system in the team of files of programm."
+}

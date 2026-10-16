@@ -1,0 +1,6 @@
+# Marking policy knobs.
+late_penalty_enabled: false   # late-submission penalty is off by default
+late_penalty_per_day: 0.0
+min_words: 100
+max_words: null
+borderline_margin: 1          # marks within this margin of a grade boundary -> review

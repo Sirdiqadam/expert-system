@@ -1,0 +1,341 @@
+# Marking rules: IF-THEN rules over facts produced by NLP + LLM extraction.
+# The inference engine fires these; the LLM never sets a score in hybrid mode.
+#
+# Priorities: within a criterion the higher level has a higher priority so that
+# when several levels match, the strongest supported level wins. Ties are broken
+# by specificity (number of leaf conditions).
+#
+# Actions: assert (set a fact) | score (set a criterion score, by value or level)
+#          penalty (subtract with a cap) | flag (route to human review)
+
+# --------------------------------------------------------------------------- #
+# CONTENT AND IDEAS
+# --------------------------------------------------------------------------- #
+- id: R-CONT-01
+  criterion: content
+  priority: 50
+  description: "Strong content: thesis, 3+ arguments, counterargument rebutted"
+  if:
+    all:
+      - {fact: thesis_present, op: "==", value: true}
+      - {fact: num_supporting_arguments, op: ">=", value: 3}
+      - {fact: counterargument_rebutted, op: "==", value: true}
+  then:
+    - {action: assert, fact: content_level, value: 4}
+    - {action: score, criterion: content, level: 4}
+  explain: "The essay states a clear position, develops {num_supporting_arguments} arguments and rebuts an opposing view."
+
+- id: R-CONT-02
+  criterion: content
+  priority: 40
+  description: "Good content: thesis and 2+ arguments"
+  if:
+    all:
+      - {fact: thesis_present, op: "==", value: true}
+      - {fact: num_supporting_arguments, op: ">=", value: 2}
+  then:
+    - {action: assert, fact: content_level, value: 3}
+    - {action: score, criterion: content, level: 3}
+  explain: "The essay states a clear position and develops at least two arguments."
+
+- id: R-CONT-03
+  criterion: content
+  priority: 30
+  description: "Fair content: a position with at least one argument"
+  if:
+    all:
+      - {fact: thesis_present, op: "==", value: true}
+      - {fact: num_supporting_arguments, op: ">=", value: 1}
+  then:
+    - {action: assert, fact: content_level, value: 2}
+    - {action: score, criterion: content, level: 2}
+  explain: "The essay states a position but its arguments are thin or undeveloped."
+
+- id: R-CONT-04
+  criterion: content
+  priority: 20
+  description: "Weak content: no thesis, or a thesis with no argument"
+  if:
+    not:
+      all:
+        - {fact: thesis_present, op: "==", value: true}
+        - {fact: num_supporting_arguments, op: ">=", value: 1}
+  then:
+    - {action: assert, fact: content_level, value: 1}
+    - {action: score, criterion: content, level: 1}
+  explain: "No clear position could be identified, or no argument was developed."
+
+- id: R-CONT-05
+  criterion: content
+  priority: 60
+  description: "Claims without supporting evidence"
+  if:
+    all:
+      - {fact: thesis_present, op: "==", value: true}
+      - {fact: arguments_without_evidence, op: ">=", value: 1}
+  then:
+    - {action: flag, reason: "claims-without-evidence"}
+  explain: "One or more arguments assert claims without citing supporting evidence."
+
+# --------------------------------------------------------------------------- #
+# ORGANIZATION
+# --------------------------------------------------------------------------- #
+- id: R-ORG-01
+  criterion: organization
+  priority: 50
+  description: "Strong organization: coherent, multi-paragraph, well linked"
+  if:
+    all:
+      - {fact: coherence_rating, op: ">=", value: 4}
+      - {fact: paragraph_count, op: ">=", value: 4}
+      - {fact: connective_count, op: ">=", value: 6}
+  then:
+    - {action: assert, fact: organization_level, value: 4}
+    - {action: score, criterion: organization, level: 4}
+  explain: "The essay is clearly structured across {paragraph_count} paragraphs with strong linking."
+
+- id: R-ORG-02
+  criterion: organization
+  priority: 40
+  description: "Good organization"
+  if:
+    all:
+      - {fact: coherence_rating, op: ">=", value: 3}
+      - {fact: paragraph_count, op: ">=", value: 3}
+  then:
+    - {action: assert, fact: organization_level, value: 3}
+    - {action: score, criterion: organization, level: 3}
+  explain: "The essay has a clear structure with linked paragraphs."
+
+- id: R-ORG-03
+  criterion: organization
+  priority: 30
+  description: "Fair organization"
+  if:
+    all:
+      - {fact: paragraph_count, op: ">=", value: 2}
+  then:
+    - {action: assert, fact: organization_level, value: 2}
+    - {action: score, criterion: organization, level: 2}
+  explain: "There is some structure, but paragraphing or linking is weak."
+
+- id: R-ORG-04
+  criterion: organization
+  priority: 20
+  description: "Weak organization: single block of text"
+  if:
+    not: {fact: paragraph_count, op: ">=", value: 2}
+  then:
+    - {action: assert, fact: organization_level, value: 1}
+    - {action: score, criterion: organization, level: 1}
+  explain: "The essay is not organised into distinct paragraphs."
+
+- id: R-ORG-05
+  criterion: organization
+  priority: 60
+  description: "Few cohesive devices"
+  if:
+    all:
+      - {fact: word_count, op: ">=", value: 80}
+      - {fact: connective_count, op: "<", value: 3}
+  then:
+    - {action: flag, reason: "few-connectives"}
+  explain: "Very few linking words or cohesive devices were used."
+
+# --------------------------------------------------------------------------- #
+# LANGUAGE AND GRAMMAR
+# --------------------------------------------------------------------------- #
+- id: R-LANG-01
+  criterion: language
+  priority: 50
+  description: "Strong language: varied accurate sentences, few errors"
+  if:
+    all:
+      - {fact: avg_sentence_length, op: ">=", value: 12}
+      - {fact: avg_sentence_length, op: "<=", value: 28}
+      - {fact: spelling_error_rate, op: "<=", value: 0.01}
+      - {fact: connective_count, op: ">=", value: 6}
+  then:
+    - {action: assert, fact: language_level, value: 4}
+    - {action: score, criterion: language, level: 4}
+  explain: "Sentences are varied and accurate, with effective use of connectives."
+
+- id: R-LANG-02
+  criterion: language
+  priority: 40
+  description: "Good language"
+  if:
+    all:
+      - {fact: avg_sentence_length, op: ">=", value: 9}
+      - {fact: spelling_error_rate, op: "<=", value: 0.03}
+  then:
+    - {action: assert, fact: language_level, value: 3}
+    - {action: score, criterion: language, level: 3}
+  explain: "Language is generally accurate with only occasional errors."
+
+- id: R-LANG-03
+  criterion: language
+  priority: 30
+  description: "Fair language"
+  if:
+    all:
+      - {fact: spelling_error_rate, op: "<=", value: 0.06}
+  then:
+    - {action: assert, fact: language_level, value: 2}
+    - {action: score, criterion: language, level: 2}
+  explain: "Frequent errors sometimes impede understanding."
+
+- id: R-LANG-04
+  criterion: language
+  priority: 20
+  description: "Weak language"
+  if:
+    not: {fact: spelling_error_rate, op: "<=", value: 0.06}
+  then:
+    - {action: assert, fact: language_level, value: 1}
+    - {action: score, criterion: language, level: 1}
+  explain: "Pervasive errors make the writing hard to follow."
+
+- id: R-LANG-05
+  criterion: language
+  priority: 60
+  description: "Many grammar errors reported by the extractor"
+  if:
+    all:
+      - {fact: grammar_error_count, op: ">", value: 10}
+  then:
+    - {action: flag, reason: "many-grammar-errors"}
+  explain: "A high number of grammatical errors was detected."
+
+- id: R-LANG-06
+  criterion: language
+  priority: 60
+  description: "Run-on sentences"
+  if:
+    all:
+      - {fact: avg_sentence_length, op: ">", value: 35}
+  then:
+    - {action: flag, reason: "run-on-sentences"}
+  explain: "Sentences are very long, suggesting run-ons."
+
+# --------------------------------------------------------------------------- #
+# MECHANICS
+# --------------------------------------------------------------------------- #
+- id: R-MECH-01
+  criterion: mechanics
+  priority: 50
+  description: "Accurate mechanics"
+  if:
+    all:
+      - {fact: spelling_error_rate, op: "<=", value: 0.005}
+  then:
+    - {action: assert, fact: mechanics_level, value: 4}
+    - {action: score, criterion: mechanics, level: 4}
+  explain: "Spelling, punctuation and capitalization are accurate."
+
+- id: R-MECH-02
+  criterion: mechanics
+  priority: 40
+  description: "Minor mechanical slips"
+  if:
+    all:
+      - {fact: spelling_error_rate, op: "<=", value: 0.02}
+  then:
+    - {action: assert, fact: mechanics_level, value: 3}
+    - {action: score, criterion: mechanics, level: 3}
+  explain: "Only minor spelling or punctuation slips were found."
+
+- id: R-MECH-03
+  criterion: mechanics
+  priority: 30
+  description: "Noticeable mechanical errors"
+  if:
+    all:
+      - {fact: spelling_error_rate, op: "<=", value: 0.05}
+  then:
+    - {action: assert, fact: mechanics_level, value: 2}
+    - {action: score, criterion: mechanics, level: 2}
+  explain: "There are noticeable spelling or punctuation errors."
+
+- id: R-MECH-04
+  criterion: mechanics
+  priority: 20
+  description: "Pervasive mechanical errors"
+  if:
+    not: {fact: spelling_error_rate, op: "<=", value: 0.05}
+  then:
+    - {action: assert, fact: mechanics_level, value: 1}
+    - {action: score, criterion: mechanics, level: 1}
+  explain: "Mechanical errors are pervasive."
+
+- id: R-MECH-05
+  criterion: mechanics
+  priority: 60
+  description: "Penalty for very high spelling error rate"
+  if:
+    all:
+      - {fact: spelling_error_rate, op: ">", value: 0.08}
+  then:
+    - {action: penalty, criterion: mechanics, amount: 1, cap: 2}
+    - {action: flag, reason: "high-spelling-errors"}
+  explain: "A very high spelling error rate was detected."
+
+- id: R-ORG-06
+  criterion: organization
+  priority: 60
+  description: "Essay presented as a single paragraph"
+  if:
+    all:
+      - {fact: word_count, op: ">=", value: 80}
+      - {fact: paragraph_count, op: "<=", value: 1}
+  then:
+    - {action: flag, reason: "single-paragraph"}
+  explain: "The whole essay is a single paragraph with no visible structure."
+
+- id: R-LANG-07
+  criterion: language
+  priority: 60
+  description: "Very short, choppy sentences"
+  if:
+    all:
+      - {fact: word_count, op: ">=", value: 80}
+      - {fact: avg_sentence_length, op: "<", value: 7}
+  then:
+    - {action: flag, reason: "choppy-sentences"}
+  explain: "Sentences are very short and choppy."
+
+# --------------------------------------------------------------------------- #
+# POLICIES / SAFETY
+# --------------------------------------------------------------------------- #
+- id: R-FLAG-SHORT
+  criterion: null
+  priority: 70
+  description: "Essay below the minimum word count"
+  if:
+    all:
+      - {fact: word_count, op: "<", value: 100}
+  then:
+    - {action: flag, reason: "essay-too-short"}
+  explain: "The essay is below the minimum expected word count."
+
+- id: R-FLAG-OFFTOPIC
+  criterion: null
+  priority: 70
+  description: "Essay judged off-topic"
+  if:
+    all:
+      - {fact: on_topic_rating, op: "<=", value: 2}
+  then:
+    - {action: flag, reason: "off-topic"}
+  explain: "The essay appears not to address the task prompt."
+
+- id: R-FLAG-INJECTION
+  criterion: null
+  priority: 70
+  description: "Possible prompt-injection text inside the essay"
+  if:
+    all:
+      - {fact: injection_detected, op: "==", value: true}
+  then:
+    - {action: flag, reason: "possible-prompt-injection"}
+  explain: "The essay contains text resembling instructions; it was treated as essay content only."

@@ -1,0 +1,5 @@
+{
+  "provider": "nvidia",
+  "model": "meta/llama-3.2-11b-vision-instruct",
+  "text": "CANDIDATE: 2025/PN/001/004\nQUESTION: 6\n\nDefine Stacks: Is a linear data structure that store data according to the life lost in first out.\n\nExample of Stack:\n\nA\n13\nC\n19\n\nIs the linear Container is the last element is removed, then the is removed.\n\n13, Define Queue is the Container the store data according to the FIFO in the first in first out.\n\nExample two Queue principle:\n\n1)\n2\n3\n4\n\nand the first row is remove the last one in the FIFO."
+}

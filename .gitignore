@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+build/
+dist/
+
+# Secrets / local config
+.env
+
+# Generated run artifacts (kept out of VCS except the frozen demo cache)
+data/runs/
+# keep the frozen live cache (nvidia/) for offline replay; ignore raw mock output
+data/cache/mock/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/

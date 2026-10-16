@@ -1,0 +1,5 @@
+{
+  "provider": "nvidia",
+  "model": "stepfun-ai/step-5-preview",
+  "text": "{\"covered\": [{\"point_id\": \"q5a_organization\", \"quote\": \"File organization is the process of method of way of the read or written stored data and managing data and between accessed so information\"}]}"
+}

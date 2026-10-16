@@ -1,0 +1,5 @@
+{
+  "provider": "nvidia",
+  "model": "stepfun-ai/step-5-preview",
+  "text": "{\"covered\": [{\"point_id\": \"q6a_lifo\", \"quote\": \"life lost in first out\"}, {\"point_id\": \"q6b_fifo\", \"quote\": \"FIFO in the first in first out\"}]}"
+}

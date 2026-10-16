@@ -1,0 +1,5 @@
+late_penalty_enabled: false
+late_penalty_per_day: 0.0
+min_words: 0
+max_words: null
+borderline_margin: 2

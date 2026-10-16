@@ -1,0 +1,5 @@
+{
+  "provider": "nvidia",
+  "model": "stepfun-ai/step-5-preview",
+  "text": "{\"covered\": [{\"point_id\": \"q4a_lifespan\", \"quote\": \"transaction file is needed as temporary... Master file holds the information or data's it files permanently\"}]}"
+}
